@@ -11,6 +11,11 @@ export default defineConfig({
         "habit-icon.svg",
         "apple-touch-icon.png",
         "mask-icon.svg",
+        "icon-128x128.png",
+        "icon-192x192.png",
+        "icon-256x256.png",
+        "icon-384x384.png",
+        "icon-512x512.png",
       ],
       manifest: {
         name: "HabitHub - Track and Build Better Habits",
@@ -36,6 +41,11 @@ export default defineConfig({
           {
             src: "icon-256x256.png",
             sizes: "256x256",
+            type: "image/png",
+          },
+          {
+            src: "icon-384x384.png",
+            sizes: "384x384",
             type: "image/png",
           },
           {

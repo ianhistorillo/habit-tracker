@@ -19,7 +19,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.21.3",
     "sonner": "^1.4.0",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "workbox-window": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

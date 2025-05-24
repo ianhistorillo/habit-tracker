@@ -33,23 +33,30 @@ const Header = ({ openMobileMenu, isMobile }: HeaderProps) => {
   };
 
   const handleNotificationClick = () => {
-    if (!("Notification" in window)) {
+    if (typeof window === "undefined" || typeof Notification === "undefined") {
       toast.error("This browser does not support notifications");
       return;
     }
 
-    if (Notification.permission === "granted") {
+    const permission = Notification.permission;
+
+    if (permission === "granted") {
       toast.success("Notifications are already enabled");
-    } else if (Notification.permission === "denied") {
+    } else if (permission === "denied") {
       toast.error("Please enable notifications in your browser settings");
     } else {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          toast.success("Notifications enabled successfully!");
-        } else {
-          toast.error("Notification permission denied");
-        }
-      });
+      Notification.requestPermission()
+        .then((newPermission) => {
+          if (newPermission === "granted") {
+            toast.success("Notifications enabled successfully!");
+          } else {
+            toast.error("Notification permission denied");
+          }
+        })
+        .catch((err) => {
+          console.error("Notification error:", err);
+          toast.error("Could not request notification permission");
+        });
     }
   };
 

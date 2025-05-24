@@ -1,8 +1,9 @@
-import { Bell, Plus, Menu } from 'lucide-react';
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import ThemeToggle from '../ui/ThemeToggle';
-import CreateHabitModal from '../habits/CreateHabitModal';
+import { Bell, Plus, Menu } from "lucide-react";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import ThemeToggle from "../ui/ThemeToggle";
+import CreateHabitModal from "../habits/CreateHabitModal";
 
 interface HeaderProps {
   openMobileMenu: () => void;
@@ -16,18 +17,39 @@ const Header = ({ openMobileMenu, isMobile }: HeaderProps) => {
 
   const getPageTitle = () => {
     switch (location.pathname) {
-      case '/':
-        return 'Dashboard';
-      case '/habits':
-        return 'My Habits';
-      case '/calendar':
-        return 'Calendar';
-      case '/reports':
-        return 'Reports';
-      case '/settings':
-        return 'Settings';
+      case "/":
+        return "Dashboard";
+      case "/habits":
+        return "My Habits";
+      case "/calendar":
+        return "Calendar";
+      case "/reports":
+        return "Reports";
+      case "/settings":
+        return "Settings";
       default:
-        return 'HabitHub';
+        return "HabitHub";
+    }
+  };
+
+  const handleNotificationClick = () => {
+    if (!("Notification" in window)) {
+      toast.error("This browser does not support notifications");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      toast.success("Notifications are already enabled");
+    } else if (Notification.permission === "denied") {
+      toast.error("Please enable notifications in your browser settings");
+    } else {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          toast.success("Notifications enabled successfully!");
+        } else {
+          toast.error("Notification permission denied");
+        }
+      });
     }
   };
 
@@ -52,25 +74,28 @@ const Header = ({ openMobileMenu, isMobile }: HeaderProps) => {
 
         <div className="flex items-center space-x-3">
           <ThemeToggle />
-          
+
           <button
             type="button"
             className="btn btn-secondary relative p-2"
             aria-label="Notifications"
+            onClick={handleNotificationClick}
           >
             <Bell size={20} />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary-500" />
+            {Notification.permission === "granted" && (
+              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary-500" />
+            )}
           </button>
-          
-          <button 
+
+          <button
             onClick={() => setShowCreateModal(true)}
             className="btn btn-primary hidden items-center space-x-1 sm:inline-flex"
           >
             <Plus size={18} />
             <span>New Habit</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => setShowCreateModal(true)}
             className="btn btn-primary p-2 sm:hidden"
             aria-label="Create new habit"

@@ -32,8 +32,14 @@ const Header = ({ openMobileMenu, isMobile }: HeaderProps) => {
     }
   };
 
+  const isNotificationSupported =
+    typeof window !== "undefined" && "Notification" in window;
+
+  const notificationsGranted =
+    isNotificationSupported && Notification.permission === "granted";
+
   const handleNotificationClick = () => {
-    if (typeof window === "undefined" || typeof Notification === "undefined") {
+    if (!isNotificationSupported) {
       toast.error("This browser does not support notifications");
       return;
     }
@@ -89,7 +95,7 @@ const Header = ({ openMobileMenu, isMobile }: HeaderProps) => {
             onClick={handleNotificationClick}
           >
             <Bell size={20} />
-            {Notification.permission === "granted" && (
+            {notificationsGranted && (
               <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary-500" />
             )}
           </button>

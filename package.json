@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
     "chart.js": "^4.4.1",
     "date-fns": "^3.2.0",
     "framer-motion": "^10.18.0",
@@ -19,8 +20,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.21.3",
     "sonner": "^1.4.0",
-    "zustand": "^4.4.7",
-    "workbox-window": "^7.0.0"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

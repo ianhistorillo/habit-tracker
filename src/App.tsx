@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 
 import Layout from "./components/layout/Layout";
 import AuthGuard from "./components/auth/AuthGuard";
+import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import HabitsPage from "./pages/HabitsPage";
@@ -42,19 +43,27 @@ function App() {
   }, [theme]);
 
   return (
-    <AuthGuard>
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="habits" element={<HabitsPage />} />
-          <Route path="calendar" element={<CalendarPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </AuthGuard>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route
+        path="/*"
+        element={
+          <AuthGuard>
+            <Routes>
+              <Route path="/auth\" element={<AuthPage />} />
+              <Route path="/app" element={<Layout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="habits" element={<HabitsPage />} />
+                <Route path="calendar" element={<CalendarPage />} />
+                <Route path="reports" element={<ReportsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
+            </Routes>
+          </AuthGuard>
+        }
+      />
+    </Routes>
   );
 }
 

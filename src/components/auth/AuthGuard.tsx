@@ -6,7 +6,7 @@ interface AuthGuardProps {
   children: React.ReactNode;
 }
 
-const PUBLIC_ROUTES = ["/auth"];
+const PUBLIC_ROUTES = ["/auth", "/"];
 
 const AuthGuard = ({ children }: AuthGuardProps) => {
   const navigate = useNavigate();
@@ -25,8 +25,8 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
 
       if (!user && !isPublicRoute) {
         navigate("/auth");
-      } else if (user && isPublicRoute) {
-        navigate("/");
+      } else if (user && location.pathname === "/auth") {
+        navigate("/app");
       }
     }
   }, [user, loading, location.pathname, navigate]);

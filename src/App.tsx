@@ -50,7 +50,7 @@ function App() {
         element={
           <AuthGuard>
             <Routes>
-              <Route path="/auth\" element={<AuthPage />} />
+              <Route path="/auth" element={<AuthPage />} />
               <Route path="/app" element={<Layout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="habits" element={<HabitsPage />} />

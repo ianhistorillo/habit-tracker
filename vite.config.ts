@@ -18,8 +18,8 @@ export default defineConfig({
         "icon-512x512.png",
       ],
       manifest: {
-        name: "HabitHub - Track and Build Better Habits",
-        short_name: "HabitHub",
+        name: "Trackbit - Track and Build Better Habits",
+        short_name: "Trackbit",
         description:
           "Track your habits, set goals, and visualize your progress",
         theme_color: "#0D9488",

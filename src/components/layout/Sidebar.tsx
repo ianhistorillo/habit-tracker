@@ -40,7 +40,7 @@ const Sidebar = ({ closeMobileMenu }: SidebarProps) => {
         <div className="flex items-center">
           <Activity className="mr-2 h-6 w-6 text-primary-600 dark:text-primary-400" />
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            HabitHub
+            Trackbit
           </h1>
         </div>
         <button

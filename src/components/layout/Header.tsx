@@ -28,7 +28,7 @@ const Header = ({ openMobileMenu, isMobile }: HeaderProps) => {
       case "/settings":
         return "Settings";
       default:
-        return "HabitHub";
+        return "Trackbit";
     }
   };
 

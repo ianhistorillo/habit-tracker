@@ -56,7 +56,7 @@ const LandingPage = () => {
           <div className="flex items-center">
             <Activity className="h-8 w-8 text-primary-600" />
             <span className="ml-2 text-xl font-bold text-gray-900">
-              HabitHub
+              Trackbit
             </span>
           </div>
           <button
@@ -79,7 +79,7 @@ const LandingPage = () => {
               </span>
             </h1>
             <p className="mx-auto mt-3 max-w-md text-base text-gray-500 sm:text-lg md:mt-5 md:max-w-3xl md:text-xl">
-              Track, analyze, and improve your daily habits with HabitHub. Our
+              Track, analyze, and improve your daily habits with Trackbit. Our
               science-backed approach helps you build lasting habits and achieve
               your goals.
             </p>
@@ -160,7 +160,7 @@ const LandingPage = () => {
             <div className="mt-12 lg:mt-0">
               <div className="space-y-4 rounded-lg bg-white p-8 shadow-lg">
                 <h3 className="text-2xl font-bold text-gray-900">
-                  How HabitHub Helps
+                  How Trackbit Helps
                 </h3>
                 <div className="space-y-4">
                   {[
@@ -192,7 +192,7 @@ const LandingPage = () => {
                   Get in Touch
                 </h2>
                 <p className="mx-auto mt-4 max-w-2xl text-lg text-primary-100">
-                  Have questions about HabitHub? We'd love to hear from you.
+                  Have questions about Trackbit? We'd love to hear from you.
                 </p>
               </div>
               <div className="mt-12">
@@ -247,11 +247,11 @@ const LandingPage = () => {
             <div className="flex items-center">
               <Activity className="h-8 w-8 text-white" />
               <span className="ml-2 text-xl font-bold text-white">
-                HabitHub
+                Trackbit
               </span>
             </div>
             <p className="text-base text-gray-400">
-              &copy; {new Date().getFullYear()} HabitHub. All rights reserved.
+              &copy; {new Date().getFullYear()} Trackbit. All rights reserved.
             </p>
           </div>
         </div>

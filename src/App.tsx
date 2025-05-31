@@ -45,13 +45,13 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/auth" element={<AuthPage />} />
       <Route
-        path="/*"
+        path="/app/*"
         element={
           <AuthGuard>
             <Routes>
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/app" element={<Layout />}>
+              <Route element={<Layout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="habits" element={<HabitsPage />} />
                 <Route path="calendar" element={<CalendarPage />} />
@@ -63,6 +63,7 @@ function App() {
           </AuthGuard>
         }
       />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

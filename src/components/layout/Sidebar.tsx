@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom';
-import { Activity, Calendar, LineChart, Settings, Home, X } from 'lucide-react';
+import { NavLink } from "react-router-dom";
+import { Activity, Calendar, LineChart, Settings, Home, X } from "lucide-react";
 
 interface SidebarProps {
   closeMobileMenu: () => void;
@@ -8,28 +8,28 @@ interface SidebarProps {
 const Sidebar = ({ closeMobileMenu }: SidebarProps) => {
   const navItems = [
     {
-      name: 'Dashboard',
-      path: '/',
+      name: "Dashboard",
+      path: "/app",
       icon: <Home size={20} />,
     },
     {
-      name: 'My Habits',
-      path: '/habits',
+      name: "My Habits",
+      path: "/app/habits",
       icon: <Activity size={20} />,
     },
     {
-      name: 'Calendar',
-      path: '/calendar',
+      name: "Calendar",
+      path: "/app/calendar",
       icon: <Calendar size={20} />,
     },
     {
-      name: 'Reports',
-      path: '/reports',
+      name: "Reports",
+      path: "/app/reports",
       icon: <LineChart size={20} />,
     },
     {
-      name: 'Settings',
-      path: '/settings',
+      name: "Settings",
+      path: "/app/settings",
       icon: <Settings size={20} />,
     },
   ];
@@ -61,8 +61,8 @@ const Sidebar = ({ closeMobileMenu }: SidebarProps) => {
             className={({ isActive }) =>
               `flex items-center rounded-md px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-400'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                  ? "bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-400"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
               }`
             }
           >

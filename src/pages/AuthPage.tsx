@@ -20,7 +20,7 @@ const AuthPage = () => {
     try {
       if (isLogin) {
         await signIn(email, password);
-        navigate("/");
+        navigate("/app");
       } else {
         await signUp(email, password);
         setIsLogin(true);

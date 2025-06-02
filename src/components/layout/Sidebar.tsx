@@ -33,10 +33,8 @@ export default function Sidebar({ closeMobileMenu }: SidebarProps) {
       icon: <LineChart size={20} />,
     },
     {
-      name: 'Settings',
-      path: '/app/settings',
       name: "Settings",
-      path: "/app",
+      path: "/app/settings",
       icon: <Settings size={20} />,
     },
   ];

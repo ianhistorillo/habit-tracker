@@ -1,35 +1,40 @@
 import { NavLink } from 'react-router-dom';
-import { Activity, Calendar, LineChart, Settings, Home, X } from 'lucide-react';
+import { Activity, Calendar, LineChart, Settings, Home, Target, X } from 'lucide-react';
 
 interface SidebarProps {
   closeMobileMenu: () => void;
 }
 
-const Sidebar = ({ closeMobileMenu }: SidebarProps) => {
+export default function Sidebar({ closeMobileMenu }: SidebarProps) {
   const navItems = [
     {
       name: 'Dashboard',
-      path: '/',
+      path: '/app',
       icon: <Home size={20} />,
     },
     {
       name: 'My Habits',
-      path: '/habits',
+      path: '/app/habits',
       icon: <Activity size={20} />,
     },
     {
       name: 'Calendar',
-      path: '/calendar',
+      path: '/app/calendar',
       icon: <Calendar size={20} />,
     },
     {
+      name: 'Planner',
+      path: '/app/planner',
+      icon: <Target size={20} />,
+    },
+    {
       name: 'Reports',
-      path: '/reports',
+      path: '/app/reports',
       icon: <LineChart size={20} />,
     },
     {
       name: 'Settings',
-      path: '/settings',
+      path: '/app/settings',
       icon: <Settings size={20} />,
     },
   ];
@@ -40,7 +45,7 @@ const Sidebar = ({ closeMobileMenu }: SidebarProps) => {
         <div className="flex items-center">
           <Activity className="mr-2 h-6 w-6 text-primary-600 dark:text-primary-400" />
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            Trackbit
+            HabitHub
           </h1>
         </div>
         <button
@@ -89,6 +94,4 @@ const Sidebar = ({ closeMobileMenu }: SidebarProps) => {
       </div>
     </div>
   );
-};
-
-export default Sidebar;
+}

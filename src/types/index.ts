@@ -55,3 +55,22 @@ export interface UserSettings {
 }
 
 export type ThemeMode = 'light' | 'dark';
+
+export interface HabitGoal {
+  id: string;
+  habitId: string;
+  targetDays: number;
+  startDate: string;
+  endDate: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface GoalAssessment {
+  id: string;
+  goalId: string;
+  date: string;
+  status: 'hit' | 'miss';
+  notes?: string;
+  createdAt: string;
+}

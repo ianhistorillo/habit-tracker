@@ -31,6 +31,7 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
   } = useHabitStore();
   const [showMenu, setShowMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const formattedDate = formatDateToYYYYMMDD(date);
   const logs = useHabitStore((state) =>
@@ -54,8 +55,9 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
     }
   })();
 
-  const handleToggleComplete = () => {
-    toggleHabitCompletion(habit.id, formattedDate);
+  const handleToggleComplete = async () => {
+    setIsAnimating(true);
+    await toggleHabitCompletion(habit.id, formattedDate);
 
     if (!isCompleted) {
       toast.success("Great job! Habit marked as complete 🎉", {
@@ -65,6 +67,10 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
     } else {
       toast.info("Progress removed for today");
     }
+
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 300);
   };
 
   const handleArchive = () => {
@@ -144,20 +150,28 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
         </div>
 
         <div className="mt-4">
-          <button
+          <motion.button
             type="button"
             onClick={handleToggleComplete}
+            animate={{
+              scale: isAnimating ? [1, 0.95, 1] : 1,
+              backgroundColor: isCompleted ? habit.color : undefined,
+            }}
+            transition={{ duration: 0.2 }}
             className={`mt-2 flex w-full items-center justify-center rounded-md py-2 transition-colors ${
               isCompleted
-                ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
+                ? "text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             }`}
+            style={{
+              backgroundColor: isCompleted ? habit.color : undefined,
+            }}
           >
             <span className="mr-2">
               {isCompleted ? "Completed" : "Mark as Done"}
             </span>
             {isCompleted && <CheckCircle size={18} />}
-          </button>
+          </motion.button>
         </div>
       </motion.div>
 

@@ -35,6 +35,8 @@ export default function Sidebar({ closeMobileMenu }: SidebarProps) {
     {
       name: 'Settings',
       path: '/app/settings',
+      name: "Settings",
+      path: "/app",
       icon: <Settings size={20} />,
     },
   ];
@@ -66,8 +68,8 @@ export default function Sidebar({ closeMobileMenu }: SidebarProps) {
             className={({ isActive }) =>
               `flex items-center rounded-md px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-400'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                  ? "bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-400"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
               }`
             }
           >

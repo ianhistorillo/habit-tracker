@@ -4,12 +4,10 @@ import {
   MoreVertical,
   Calendar,
   ChevronUp,
-  Plus,
-  Minus,
   Archive,
   Edit2,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useHabitStore } from "../../stores/habitStore";
 import { formatDateToYYYYMMDD } from "../../utils/date";
 import HabitProgressBar from "./HabitProgressBar";
@@ -39,9 +37,17 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
       (log) => log.habitId === habit.id && log.date === formattedDate
     )
   );
-
   const log = logs.length > 0 ? logs[0] : null;
-  const isCompleted = log?.completed || false;
+  const isCompletedFromStore = log?.completed || false;
+
+  // Local state for real-time UI update
+  const [localCompleted, setLocalCompleted] = useState(isCompletedFromStore);
+
+  // Sync local state if store updates
+  useEffect(() => {
+    setLocalCompleted(isCompletedFromStore);
+  }, [isCompletedFromStore]);
+
   const streak = getHabitStreak(habit.id).current;
 
   const IconComponent = (() => {
@@ -57,12 +63,14 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
 
   const handleToggleComplete = async () => {
     setIsAnimating(true);
+    const newStatus = !localCompleted;
+    setLocalCompleted(newStatus); // Optimistic UI update
+
     await toggleHabitCompletion(habit.id, formattedDate);
 
-    if (!isCompleted) {
+    if (newStatus) {
       toast.success("Great job! Habit marked as complete 🎉", {
-        description:
-          streak > 0 ? `You're on a ${streak + 1} day streak!` : undefined,
+        description: streak > 0 ? `You're on a ${streak + 1} day streak!` : undefined,
       });
     } else {
       toast.info("Progress removed for today");
@@ -155,22 +163,22 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
             onClick={handleToggleComplete}
             animate={{
               scale: isAnimating ? [1, 0.95, 1] : 1,
-              backgroundColor: isCompleted ? habit.color : undefined,
+              backgroundColor: localCompleted ? habit.color : undefined,
             }}
             transition={{ duration: 0.2 }}
             className={`mt-2 flex w-full items-center justify-center rounded-md py-2 transition-colors ${
-              isCompleted
+              localCompleted
                 ? "text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             }`}
             style={{
-              backgroundColor: isCompleted ? habit.color : undefined,
+              backgroundColor: localCompleted ? habit.color : undefined,
             }}
           >
             <span className="mr-2">
-              {isCompleted ? "Completed" : "Mark as Done"}
+              {localCompleted ? "Completed" : "Mark as Done"}
             </span>
-            {isCompleted && <CheckCircle size={18} />}
+            {localCompleted && <CheckCircle size={18} />}
           </motion.button>
         </div>
       </motion.div>

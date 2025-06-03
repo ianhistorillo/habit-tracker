@@ -58,10 +58,10 @@ export type ThemeMode = 'light' | 'dark';
 
 export interface HabitGoal {
   id: string;
-  habitId: string;
+  habit_id: string;
   targetDays: number;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   notes?: string;
   createdAt: string;
 }

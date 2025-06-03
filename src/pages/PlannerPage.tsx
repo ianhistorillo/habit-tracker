@@ -21,14 +21,17 @@ const PlannerPage = () => {
   const [goals, setGoals] = useState<HabitGoal[]>([]);
   const [assessments, setAssessments] = useState<GoalAssessment[]>([]);
 
-  // Fetch goals on component mount
+  // Fetch goals on component mount and when user changes
   useEffect(() => {
     const fetchGoals = async () => {
+      if (!user) return;
+
       try {
+        setLoading(true);
         const { data: goalsData, error: goalsError } = await supabase
           .from('habit_goals')
           .select('*')
-          .eq('user_id', user?.id)
+          .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
         if (goalsError) throw goalsError;
@@ -50,9 +53,7 @@ const PlannerPage = () => {
       }
     };
 
-    if (user) {
-      fetchGoals();
-    }
+    fetchGoals();
   }, [user]);
   
   const handleCreateGoal = async () => {
@@ -70,6 +71,7 @@ const PlannerPage = () => {
     const endDate = addDays(startDate, targetDays);
     
     try {
+      setLoading(true);
       const { data: newGoal, error } = await supabase
         .from('habit_goals')
         .insert({
@@ -85,7 +87,7 @@ const PlannerPage = () => {
 
       if (error) throw error;
       
-      setGoals([newGoal, ...goals]);
+      setGoals(prevGoals => [newGoal, ...prevGoals]);
       toast.success('Goal created successfully');
       
       // Reset form
@@ -94,11 +96,14 @@ const PlannerPage = () => {
     } catch (error) {
       console.error('Error creating goal:', error);
       toast.error('Failed to create goal');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteGoal = async (goalId: string) => {
     try {
+      setLoading(true);
       const { error } = await supabase
         .from('habit_goals')
         .delete()
@@ -112,19 +117,21 @@ const PlannerPage = () => {
     } catch (error) {
       console.error('Error deleting goal:', error);
       toast.error('Failed to delete goal');
+    } finally {
+      setLoading(false);
     }
   };
   
   const calculateGoalProgress = (goal: HabitGoal) => {
     const dateRange = eachDayOfInterval({
-      start: new Date(goal.startDate),
-      end: new Date(goal.endDate),
+      start: new Date(goal.start_date),
+      end: new Date(goal.end_date),
     });
     
     const totalDays = dateRange.length;
     const completedDays = dateRange.filter(date => {
       const logs = getHabitLogsForDate(format(date, 'yyyy-MM-dd'));
-      return logs.some(log => log.habitId === goal.habitId && log.completed);
+      return logs.some(log => log.habitId === goal.habit_id && log.completed);
     }).length;
     
     const progress = (completedDays / totalDays) * 100;
@@ -207,8 +214,15 @@ const PlannerPage = () => {
             type="button"
             onClick={handleCreateGoal}
             className="btn btn-primary w-full"
+            disabled={loading}
           >
-            Create Goal
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              </div>
+            ) : (
+              'Create Goal'
+            )}
           </button>
         </div>
       </div>
@@ -228,7 +242,7 @@ const PlannerPage = () => {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {goals.map((goal) => {
-              const habit = activeHabits.find((h) => h.id === goal.habitId);
+              const habit = activeHabits.find((h) => h.id === goal.habit_id);
               if (!habit) return null;
               
               const { completedDays, totalDays, progress, isEffective } = calculateGoalProgress(goal);
@@ -246,7 +260,7 @@ const PlannerPage = () => {
                         {habit.name}
                       </h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {format(new Date(goal.startDate), 'MMM d, yyyy')} - {format(new Date(goal.endDate), 'MMM d, yyyy')}
+                        {format(new Date(goal.start_date), 'MMM d, yyyy')} - {format(new Date(goal.end_date), 'MMM d, yyyy')}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">

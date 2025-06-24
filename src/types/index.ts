@@ -4,7 +4,7 @@ export interface Habit {
   description?: string;
   icon?: string;
   color: string;
-  frequency: 'daily' | 'weekly' | 'custom';
+  frequency: "daily" | "weekly" | "custom";
   targetDays: number[]; // 0 = Sunday, 6 = Saturday
   targetValue?: number; // For quantifiable habits (e.g., drink 8 glasses of water)
   unit?: string; // For quantifiable habits (e.g., "glasses", "minutes")
@@ -42,7 +42,7 @@ export interface Achievement {
   icon: string;
   unlockedAt?: string;
   criteria: {
-    type: 'streak' | 'completionRate' | 'totalCompleted';
+    type: "streak" | "completionRate" | "totalCompleted";
     value: number;
     habitId?: string; // If specific to a habit
   };
@@ -54,14 +54,14 @@ export interface UserSettings {
   weekStartsOn: 0 | 1; // 0 = Sunday, 1 = Monday
 }
 
-export type ThemeMode = 'light' | 'dark';
+export type ThemeMode = "light" | "dark";
 
 export interface HabitGoal {
   id: string;
-  habit_id: string;
+  habitId: string;
   targetDays: number;
-  start_date: string;
-  end_date: string;
+  startDate: string;
+  endDate: string;
   notes?: string;
   createdAt: string;
 }
@@ -70,7 +70,37 @@ export interface GoalAssessment {
   id: string;
   goalId: string;
   date: string;
-  status: 'hit' | 'miss';
+  status: "hit" | "miss";
   notes?: string;
   createdAt: string;
+}
+
+// New Routine Types
+export interface Routine {
+  id: string;
+  name: string;
+  description?: string;
+  habitIds: string[];
+  reminderTime?: string; // HH:MM format
+  color: string;
+  icon: string;
+  createdAt: string;
+  archivedAt?: string;
+}
+
+export interface RoutineLog {
+  id: string;
+  routineId: string;
+  date: string; // YYYY-MM-DD format
+  completed: boolean;
+  completedHabits: string[]; // Array of habit IDs that were completed
+  notes?: string;
+  createdAt: string;
+}
+
+export interface RoutineStreak {
+  routineId: string;
+  current: number;
+  longest: number;
+  lastCompletedDate?: string;
 }

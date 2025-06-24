@@ -1,44 +1,47 @@
-import { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 
-import Layout from './components/layout/Layout';
-import AuthGuard from './components/auth/AuthGuard';
-import LandingPage from './pages/LandingPage';
-import AuthPage from './pages/AuthPage';
-import Dashboard from './pages/Dashboard';
-import HabitsPage from './pages/HabitsPage';
-import CalendarPage from './pages/CalendarPage';
-import PlannerPage from './pages/PlannerPage';
-import ReportsPage from './pages/ReportsPage';
-import SettingsPage from './pages/SettingsPage';
-import NotFoundPage from './pages/NotFoundPage';
+import Layout from "./components/layout/Layout";
+import AuthGuard from "./components/auth/AuthGuard";
+import LandingPage from "./pages/LandingPage";
+import AuthPage from "./pages/AuthPage";
+import Dashboard from "./pages/Dashboard";
+import HabitsPage from "./pages/HabitsPage";
+import RoutinesPage from "./pages/RoutinesPage";
+import CalendarPage from "./pages/CalendarPage";
+import PlannerPage from "./pages/PlannerPage";
+import ReportsPage from "./pages/ReportsPage";
+import SettingsPage from "./pages/SettingsPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
-import { useThemeStore } from './stores/themeStore';
+import { useThemeStore } from "./stores/themeStore";
 
 function App() {
   const { theme, setTheme } = useThemeStore();
 
   useEffect(() => {
     // Check if user prefers dark mode
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
     // Check for saved theme preference in local storage
-    const savedTheme = localStorage.getItem('theme');
-    
+    const savedTheme = localStorage.getItem("theme");
+
     if (savedTheme) {
-      setTheme(savedTheme as 'light' | 'dark');
+      setTheme(savedTheme as "light" | "dark");
     } else if (prefersDarkMode) {
-      setTheme('dark');
+      setTheme("dark");
     }
   }, [setTheme]);
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
   return (
@@ -53,6 +56,7 @@ function App() {
               <Route element={<Layout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="habits" element={<HabitsPage />} />
+                <Route path="routines" element={<RoutinesPage />} />
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="planner" element={<PlannerPage />} />
                 <Route path="reports" element={<ReportsPage />} />

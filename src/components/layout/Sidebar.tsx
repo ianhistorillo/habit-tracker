@@ -1,5 +1,13 @@
-import { NavLink } from 'react-router-dom';
-import { Activity, Calendar, LineChart, Settings, Home, Target, X } from 'lucide-react';
+import { NavLink } from "react-router-dom";
+import {
+  Activity,
+  Calendar,
+  LineChart,
+  Settings,
+  Home,
+  Target,
+  Layers,
+} from "lucide-react";
 
 interface SidebarProps {
   closeMobileMenu: () => void;
@@ -8,28 +16,33 @@ interface SidebarProps {
 export default function Sidebar({ closeMobileMenu }: SidebarProps) {
   const navItems = [
     {
-      name: 'Dashboard',
-      path: '/app',
+      name: "Dashboard",
+      path: "/app",
       icon: <Home size={20} />,
     },
     {
-      name: 'My Habits',
-      path: '/app/habits',
+      name: "My Habits",
+      path: "/app/habits",
       icon: <Activity size={20} />,
     },
     {
-      name: 'Calendar',
-      path: '/app/calendar',
+      name: "Routines",
+      path: "/app/routines",
+      icon: <Layers size={20} />,
+    },
+    {
+      name: "Calendar",
+      path: "/app/calendar",
       icon: <Calendar size={20} />,
     },
     {
-      name: 'Planner',
-      path: '/app/planner',
+      name: "Planner",
+      path: "/app/planner",
       icon: <Target size={20} />,
     },
     {
-      name: 'Reports',
-      path: '/app/reports',
+      name: "Reports",
+      path: "/app/reports",
       icon: <LineChart size={20} />,
     },
     {
@@ -53,7 +66,7 @@ export default function Sidebar({ closeMobileMenu }: SidebarProps) {
           onClick={closeMobileMenu}
           aria-label="Close menu"
         >
-          <X size={20} />
+          <Activity size={20} />
         </button>
       </div>
 

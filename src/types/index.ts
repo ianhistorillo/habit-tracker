@@ -75,7 +75,7 @@ export interface GoalAssessment {
   createdAt: string;
 }
 
-// New Routine Types
+// Routine Types
 export interface Routine {
   id: string;
   name: string;
@@ -103,4 +103,84 @@ export interface RoutineStreak {
   current: number;
   longest: number;
   lastCompletedDate?: string;
+}
+
+// New Enhanced Features Types
+export interface RoutineTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category:
+    | "morning"
+    | "evening"
+    | "fitness"
+    | "productivity"
+    | "wellness"
+    | "custom";
+  icon: string;
+  color: string;
+  estimatedDuration: number; // in minutes
+  difficulty: "beginner" | "intermediate" | "advanced";
+  habits: {
+    name: string;
+    description: string;
+    icon: string;
+    frequency: "daily" | "weekly" | "custom";
+    targetDays: number[];
+    targetValue?: number;
+    unit?: string;
+  }[];
+  tags: string[];
+  popularity: number; // 1-5 rating
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  description?: string;
+  startTime: string; // ISO string
+  endTime: string; // ISO string
+  type: "routine" | "habit" | "reminder";
+  relatedId: string; // routine or habit ID
+  color: string;
+  isRecurring: boolean;
+  recurrencePattern?: {
+    frequency: "daily" | "weekly" | "monthly";
+    interval: number;
+    daysOfWeek?: number[];
+    endDate?: string;
+  };
+}
+
+export interface SmartSuggestion {
+  id: string;
+  type: "routine" | "habit" | "optimization";
+  title: string;
+  description: string;
+  reasoning: string;
+  confidence: number; // 0-1 score
+  category: string;
+  actionData: {
+    templateId?: string;
+    habitSuggestions?: Partial<Habit>[];
+    routineData?: Partial<Routine>;
+    optimizationTips?: string[];
+  };
+  createdAt: string;
+  dismissed?: boolean;
+  applied?: boolean;
+}
+
+export interface UserPattern {
+  userId: string;
+  completionTimes: Record<string, string[]>; // habitId -> array of completion times
+  streakPatterns: Record<string, number[]>; // habitId -> streak lengths
+  weeklyPatterns: Record<string, number[]>; // habitId -> completion by day of week
+  seasonalPatterns: Record<string, Record<string, number>>; // habitId -> month -> completion rate
+  correlations: Array<{
+    habit1: string;
+    habit2: string;
+    correlation: number;
+  }>;
+  lastAnalyzed: string;
 }

@@ -2,12 +2,27 @@ import { useState } from "react";
 import { useRoutineStore } from "../stores/routineStore";
 import { useHabitStore } from "../stores/habitStore";
 import RoutineCard from "../components/routines/RoutineCard";
-import { Plus, Filter, LayoutGrid, LayoutList, Search } from "lucide-react";
+import {
+  Plus,
+  Filter,
+  LayoutGrid,
+  LayoutList,
+  Search,
+  Sparkles,
+  Calendar,
+  Brain,
+} from "lucide-react";
 import CreateRoutineModal from "../components/routines/CreateRoutineModal";
+import RoutineTemplatesModal from "../components/routines/RoutineTemplatesModal";
+import CalendarSyncModal from "../components/calendar/CalendarSyncModal";
+import SmartSuggestionsPanel from "../components/ai/SmartSuggestionsPanel";
 import { motion } from "framer-motion";
 
 const RoutinesPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showTemplatesModal, setShowTemplatesModal] = useState(false);
+  const [showCalendarSync, setShowCalendarSync] = useState(false);
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filterActive, setFilterActive] = useState(true);
@@ -95,28 +110,80 @@ const RoutinesPage = () => {
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowCreateModal(true)}
-            className="btn btn-primary hidden items-center space-x-1 sm:inline-flex"
-            disabled={activeHabits.length === 0}
-          >
-            <Plus size={18} />
-            <span>New Routine</span>
-          </button>
+          {/* Enhanced Action Buttons */}
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={() => setShowAISuggestions(true)}
+              className="btn btn-secondary hidden items-center space-x-1 sm:inline-flex"
+              disabled={activeHabits.length === 0}
+            >
+              <Brain size={18} />
+              <span>AI Suggestions</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setShowCreateModal(true)}
-            className="btn btn-primary p-2 sm:hidden"
-            aria-label="Create new routine"
-            disabled={activeHabits.length === 0}
-          >
-            <Plus size={20} />
-          </button>
+            <button
+              type="button"
+              onClick={() => setShowCalendarSync(true)}
+              className="btn btn-secondary hidden items-center space-x-1 sm:inline-flex"
+            >
+              <Calendar size={18} />
+              <span>Calendar Sync</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowTemplatesModal(true)}
+              className="btn btn-accent hidden items-center space-x-1 sm:inline-flex"
+            >
+              <Sparkles size={18} />
+              <span>Templates</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowCreateModal(true)}
+              className="btn btn-primary hidden items-center space-x-1 sm:inline-flex"
+              disabled={activeHabits.length === 0}
+            >
+              <Plus size={18} />
+              <span>New Routine</span>
+            </button>
+
+            {/* Mobile buttons */}
+            <button
+              type="button"
+              onClick={() => setShowAISuggestions(true)}
+              className="btn btn-secondary p-2 sm:hidden"
+              aria-label="AI suggestions"
+              disabled={activeHabits.length === 0}
+            >
+              <Brain size={20} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowTemplatesModal(true)}
+              className="btn btn-accent p-2 sm:hidden"
+              aria-label="Browse templates"
+            >
+              <Sparkles size={20} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowCreateModal(true)}
+              className="btn btn-primary p-2 sm:hidden"
+              aria-label="Create new routine"
+              disabled={activeHabits.length === 0}
+            >
+              <Plus size={20} />
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Enhanced Empty States */}
       {activeHabits.length === 0 ? (
         <div className="rounded-lg bg-white p-8 text-center shadow-sm dark:bg-gray-800">
           <motion.div
@@ -142,8 +209,11 @@ const RoutinesPage = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-              <Filter size={24} className="text-gray-500 dark:text-gray-400" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30">
+              <Sparkles
+                size={24}
+                className="text-purple-600 dark:text-purple-400"
+              />
             </div>
             <h3 className="mb-1 text-lg font-medium text-gray-900 dark:text-white">
               {searchQuery
@@ -152,7 +222,7 @@ const RoutinesPage = () => {
                 ? "No active routines"
                 : "No archived routines"}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="mb-4 text-gray-600 dark:text-gray-400">
               {searchQuery
                 ? `No routines matching "${searchQuery}"`
                 : filterActive
@@ -160,14 +230,24 @@ const RoutinesPage = () => {
                 : "You haven't archived any routines yet."}
             </p>
             {filterActive && !searchQuery && (
-              <button
-                type="button"
-                onClick={() => setShowCreateModal(true)}
-                className="mt-4 inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
-              >
-                <Plus size={16} className="mr-1" />
-                New Routine
-              </button>
+              <div className="flex flex-col items-center space-y-3 sm:flex-row sm:justify-center sm:space-x-3 sm:space-y-0">
+                <button
+                  type="button"
+                  onClick={() => setShowTemplatesModal(true)}
+                  className="inline-flex items-center rounded-md bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-sm font-medium text-white hover:from-purple-700 hover:to-pink-700"
+                >
+                  <Sparkles size={16} className="mr-1" />
+                  Browse Templates
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(true)}
+                  className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+                >
+                  <Plus size={16} className="mr-1" />
+                  Create Custom
+                </button>
+              </div>
             )}
           </motion.div>
         </div>
@@ -185,9 +265,23 @@ const RoutinesPage = () => {
         </div>
       )}
 
+      {/* Modals */}
       {showCreateModal && (
         <CreateRoutineModal onClose={() => setShowCreateModal(false)} />
       )}
+
+      {showTemplatesModal && (
+        <RoutineTemplatesModal onClose={() => setShowTemplatesModal(false)} />
+      )}
+
+      {showCalendarSync && (
+        <CalendarSyncModal onClose={() => setShowCalendarSync(false)} />
+      )}
+
+      <SmartSuggestionsPanel
+        isOpen={showAISuggestions}
+        onClose={() => setShowAISuggestions(false)}
+      />
     </div>
   );
 };

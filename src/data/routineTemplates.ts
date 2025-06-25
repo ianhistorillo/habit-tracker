@@ -1,0 +1,313 @@
+import { RoutineTemplate } from "../types";
+
+export const ROUTINE_TEMPLATES: RoutineTemplate[] = [
+  {
+    id: "morning-energizer",
+    name: "Morning Energizer",
+    description: "Start your day with energy and focus",
+    category: "morning",
+    icon: "Sunrise",
+    color: "#F59E0B",
+    estimatedDuration: 45,
+    difficulty: "beginner",
+    habits: [
+      {
+        name: "Drink Water",
+        description: "Hydrate with 2 glasses of water",
+        icon: "Droplets",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 2,
+        unit: "glasses",
+      },
+      {
+        name: "Morning Stretch",
+        description: "10 minutes of light stretching",
+        icon: "Activity",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 10,
+        unit: "minutes",
+      },
+      {
+        name: "Meditation",
+        description: "5 minutes of mindfulness",
+        icon: "Brain",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 5,
+        unit: "minutes",
+      },
+      {
+        name: "Plan Your Day",
+        description: "Review and prioritize daily tasks",
+        icon: "Calendar",
+        frequency: "daily",
+        targetDays: [1, 2, 3, 4, 5],
+      },
+    ],
+    tags: ["morning", "energy", "mindfulness", "productivity"],
+    popularity: 5,
+  },
+  {
+    id: "evening-wind-down",
+    name: "Evening Wind Down",
+    description: "Relax and prepare for quality sleep",
+    category: "evening",
+    icon: "Moon",
+    color: "#6366F1",
+    estimatedDuration: 30,
+    difficulty: "beginner",
+    habits: [
+      {
+        name: "No Screens",
+        description: "Avoid screens 1 hour before bed",
+        icon: "Smartphone",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+      },
+      {
+        name: "Reading",
+        description: "Read for 20 minutes",
+        icon: "BookOpen",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 20,
+        unit: "minutes",
+      },
+      {
+        name: "Gratitude Journal",
+        description: "Write 3 things you're grateful for",
+        icon: "Heart",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 3,
+        unit: "items",
+      },
+      {
+        name: "Prepare Tomorrow",
+        description: "Set out clothes and prepare for tomorrow",
+        icon: "Clock",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+      },
+    ],
+    tags: ["evening", "sleep", "relaxation", "gratitude"],
+    popularity: 4,
+  },
+  {
+    id: "fitness-warrior",
+    name: "Fitness Warrior",
+    description: "Build strength and endurance",
+    category: "fitness",
+    icon: "Dumbbell",
+    color: "#EF4444",
+    estimatedDuration: 60,
+    difficulty: "intermediate",
+    habits: [
+      {
+        name: "Workout",
+        description: "30 minutes of exercise",
+        icon: "Dumbbell",
+        frequency: "custom",
+        targetDays: [1, 3, 5], // Mon, Wed, Fri
+        targetValue: 30,
+        unit: "minutes",
+      },
+      {
+        name: "Protein Intake",
+        description: "Consume adequate protein",
+        icon: "Apple",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 100,
+        unit: "grams",
+      },
+      {
+        name: "Steps",
+        description: "Walk 10,000 steps",
+        icon: "Footprints",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 10000,
+        unit: "steps",
+      },
+      {
+        name: "Sleep",
+        description: "Get 8 hours of quality sleep",
+        icon: "Moon",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 8,
+        unit: "hours",
+      },
+    ],
+    tags: ["fitness", "strength", "health", "discipline"],
+    popularity: 4,
+  },
+  {
+    id: "productivity-master",
+    name: "Productivity Master",
+    description: "Maximize focus and output",
+    category: "productivity",
+    icon: "Target",
+    color: "#10B981",
+    estimatedDuration: 90,
+    difficulty: "advanced",
+    habits: [
+      {
+        name: "Deep Work",
+        description: "2 hours of focused work",
+        icon: "Brain",
+        frequency: "daily",
+        targetDays: [1, 2, 3, 4, 5],
+        targetValue: 120,
+        unit: "minutes",
+      },
+      {
+        name: "Email Batching",
+        description: "Check email only 3 times",
+        icon: "Mail",
+        frequency: "daily",
+        targetDays: [1, 2, 3, 4, 5],
+        targetValue: 3,
+        unit: "times",
+      },
+      {
+        name: "Learning",
+        description: "Learn something new for 30 minutes",
+        icon: "BookOpen",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 30,
+        unit: "minutes",
+      },
+      {
+        name: "Review & Plan",
+        description: "Review progress and plan next day",
+        icon: "CheckSquare",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+      },
+    ],
+    tags: ["productivity", "focus", "learning", "planning"],
+    popularity: 3,
+  },
+  {
+    id: "wellness-journey",
+    name: "Wellness Journey",
+    description: "Nurture your mind, body, and soul",
+    category: "wellness",
+    icon: "Heart",
+    color: "#EC4899",
+    estimatedDuration: 40,
+    difficulty: "beginner",
+    habits: [
+      {
+        name: "Mindful Breathing",
+        description: "10 minutes of breathing exercises",
+        icon: "Wind",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 10,
+        unit: "minutes",
+      },
+      {
+        name: "Healthy Meal",
+        description: "Eat one nutritious meal",
+        icon: "Apple",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+      },
+      {
+        name: "Nature Time",
+        description: "Spend time outdoors",
+        icon: "Trees",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 15,
+        unit: "minutes",
+      },
+      {
+        name: "Social Connection",
+        description: "Connect with a friend or family member",
+        icon: "Users",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+      },
+    ],
+    tags: ["wellness", "mindfulness", "health", "connection"],
+    popularity: 5,
+  },
+  {
+    id: "student-success",
+    name: "Student Success",
+    description: "Excel in your studies",
+    category: "productivity",
+    icon: "GraduationCap",
+    color: "#8B5CF6",
+    estimatedDuration: 120,
+    difficulty: "intermediate",
+    habits: [
+      {
+        name: "Study Session",
+        description: "Focused study for 90 minutes",
+        icon: "BookOpen",
+        frequency: "daily",
+        targetDays: [1, 2, 3, 4, 5],
+        targetValue: 90,
+        unit: "minutes",
+      },
+      {
+        name: "Review Notes",
+        description: "Review and organize notes",
+        icon: "FileText",
+        frequency: "daily",
+        targetDays: [1, 2, 3, 4, 5],
+        targetValue: 20,
+        unit: "minutes",
+      },
+      {
+        name: "Exercise Break",
+        description: "Take active breaks",
+        icon: "Activity",
+        frequency: "daily",
+        targetDays: [1, 2, 3, 4, 5],
+        targetValue: 15,
+        unit: "minutes",
+      },
+      {
+        name: "Sleep Schedule",
+        description: "Maintain consistent sleep",
+        icon: "Moon",
+        frequency: "daily",
+        targetDays: [0, 1, 2, 3, 4, 5, 6],
+        targetValue: 8,
+        unit: "hours",
+      },
+    ],
+    tags: ["study", "learning", "focus", "health"],
+    popularity: 4,
+  },
+];
+
+export const getTemplatesByCategory = (category: string) => {
+  return ROUTINE_TEMPLATES.filter((template) => template.category === category);
+};
+
+export const getPopularTemplates = (limit: number = 3) => {
+  return ROUTINE_TEMPLATES.sort((a, b) => b.popularity - a.popularity).slice(
+    0,
+    limit
+  );
+};
+
+export const searchTemplates = (query: string) => {
+  const lowercaseQuery = query.toLowerCase();
+  return ROUTINE_TEMPLATES.filter(
+    (template) =>
+      template.name.toLowerCase().includes(lowercaseQuery) ||
+      template.description.toLowerCase().includes(lowercaseQuery) ||
+      template.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
+  );
+};

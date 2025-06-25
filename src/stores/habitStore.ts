@@ -39,7 +39,7 @@ interface HabitStore {
   updateHabitValue: (
     habitId: string,
     date: string,
-    value: number
+    value?: number
   ) => Promise<void>;
   updateHabitNote: (
     habitId: string,
@@ -208,9 +208,24 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
 
   updateHabit: async (id, habitData) => {
     try {
+      // Transform camelCase to snake_case for database
+      const dbData: any = {};
+      if (habitData.name !== undefined) dbData.name = habitData.name;
+      if (habitData.description !== undefined)
+        dbData.description = habitData.description;
+      if (habitData.icon !== undefined) dbData.icon = habitData.icon;
+      if (habitData.color !== undefined) dbData.color = habitData.color;
+      if (habitData.frequency !== undefined)
+        dbData.frequency = habitData.frequency;
+      if (habitData.targetDays !== undefined)
+        dbData.target_days = habitData.targetDays;
+      if (habitData.targetValue !== undefined)
+        dbData.target_value = habitData.targetValue;
+      if (habitData.unit !== undefined) dbData.unit = habitData.unit;
+
       const { error } = await supabase
         .from("habits")
-        .update(habitData)
+        .update(dbData)
         .eq("id", id);
 
       if (error) throw error;
@@ -281,21 +296,32 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
 
     try {
       if (existingLog) {
+        // Toggle the existing log
+        const newCompletedState = !existingLog.completed;
+
         const { error } = await supabase
           .from("habit_logs")
-          .update({ completed: !existingLog.completed })
+          .update({ completed: newCompletedState })
           .eq("id", existingLog.id);
 
         if (error) throw error;
 
+        // Update local state immediately
         set((state) => ({
           logs: state.logs.map((log) =>
             log.id === existingLog.id
-              ? { ...log, completed: !log.completed }
+              ? { ...log, completed: newCompletedState }
               : log
           ),
         }));
+
+        console.log(
+          `Habit ${habitId} toggled to ${
+            newCompletedState ? "completed" : "incomplete"
+          } in database`
+        );
       } else {
+        // Create new log entry as completed
         const habit = get().getHabitById(habitId);
         const defaultValue = habit?.targetValue || undefined;
 
@@ -315,20 +341,30 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
 
         if (error) throw error;
 
+        // Transform and add to local state
+        const transformedLog = {
+          id: newLog.id,
+          habitId: newLog.habit_id,
+          date: newLog.date,
+          completed: newLog.completed,
+          value: newLog.value,
+          notes: newLog.notes,
+        };
+
         set((state) => ({
-          logs: [...state.logs, newLog],
+          logs: [...state.logs, transformedLog],
         }));
+
+        console.log(
+          `New habit log created for ${habitId} as completed in database`
+        );
       }
 
       // Update streaks
       await get().updateStreak(habitId);
-
-      toast.success(
-        existingLog?.completed ? "Progress removed" : "Progress updated"
-      );
     } catch (error) {
       console.error("Error updating habit completion:", error);
-      toast.error("Failed to update progress");
+      throw error; // Re-throw to handle in component
     }
   },
 
@@ -373,8 +409,17 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
 
         if (error) throw error;
 
+        const transformedLog = {
+          id: newLog.id,
+          habitId: newLog.habit_id,
+          date: newLog.date,
+          completed: newLog.completed,
+          value: newLog.value,
+          notes: newLog.notes,
+        };
+
         set((state) => ({
-          logs: [...state.logs, newLog],
+          logs: [...state.logs, transformedLog],
         }));
       }
 
@@ -427,8 +472,17 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
 
         if (error) throw error;
 
+        const transformedLog = {
+          id: newLog.id,
+          habitId: newLog.habit_id,
+          date: newLog.date,
+          completed: newLog.completed,
+          value: newLog.value,
+          notes: newLog.notes,
+        };
+
         set((state) => ({
-          logs: [...state.logs, newLog],
+          logs: [...state.logs, transformedLog],
         }));
       }
 

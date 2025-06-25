@@ -17,44 +17,39 @@ const RoutineExecutionModal = ({
   routine,
   onClose,
 }: RoutineExecutionModalProps) => {
-  const { updateRoutineProgress, getRoutineLogForDate } = useRoutineStore();
+  const { updateRoutineProgress } = useRoutineStore();
   const { getHabitById, getHabitLogsForDate, toggleHabitCompletion } =
     useHabitStore();
 
-  const [completedHabits, setCompletedHabits] = useState<string[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const today = formatDateToYYYYMMDD(new Date());
   const habits = routine.habitIds.map((id) => getHabitById(id)).filter(Boolean);
 
-  // Initialize completed habits from existing logs
-  useEffect(() => {
-    const habitLogs = getHabitLogsForDate(today);
-    const completed = routine.habitIds.filter((habitId) =>
-      habitLogs.some((log) => log.habitId === habitId && log.completed)
-    );
-    setCompletedHabits(completed);
-  }, [routine.habitIds, today, getHabitLogsForDate]);
+  // Get real-time completion status from habit store
+  const habitLogs = getHabitLogsForDate(today);
+  const completedHabits = routine.habitIds.filter((habitId) =>
+    habitLogs.some((log) => log.habitId === habitId && log.completed)
+  );
 
   const handleHabitToggle = async (habitId: string) => {
     setIsUpdating(true);
 
     try {
-      // Toggle the habit completion
+      // Toggle the habit completion using the habit store
       await toggleHabitCompletion(habitId, today);
 
-      // Update local state
-      const newCompletedHabits = completedHabits.includes(habitId)
-        ? completedHabits.filter((id) => id !== habitId)
-        : [...completedHabits, habitId];
-
-      setCompletedHabits(newCompletedHabits);
+      // Get updated completion status
+      const updatedLogs = getHabitLogsForDate(today);
+      const updatedCompletedHabits = routine.habitIds.filter((id) =>
+        updatedLogs.some((log) => log.habitId === id && log.completed)
+      );
 
       // Update routine progress
-      await updateRoutineProgress(routine.id, today, newCompletedHabits);
+      await updateRoutineProgress(routine.id, today, updatedCompletedHabits);
 
       // Check if routine is complete
-      if (newCompletedHabits.length === routine.habitIds.length) {
+      if (updatedCompletedHabits.length === routine.habitIds.length) {
         toast.success("🎉 Routine completed! Great job!", {
           description: "All habits in this routine are done for today.",
         });
@@ -190,7 +185,7 @@ const RoutineExecutionModal = ({
               type="button"
               className="btn btn-primary"
               onClick={async () => {
-                // Mark all habits as complete
+                // Mark all remaining habits as complete
                 const remainingHabits = routine.habitIds.filter(
                   (id) => !completedHabits.includes(id)
                 );
@@ -201,8 +196,12 @@ const RoutineExecutionModal = ({
                     await toggleHabitCompletion(habitId, today);
                   }
 
-                  const allCompleted = [...completedHabits, ...remainingHabits];
-                  setCompletedHabits(allCompleted);
+                  // Get final completion status
+                  const finalLogs = getHabitLogsForDate(today);
+                  const allCompleted = routine.habitIds.filter((id) =>
+                    finalLogs.some((log) => log.habitId === id && log.completed)
+                  );
+
                   await updateRoutineProgress(routine.id, today, allCompleted);
 
                   toast.success("🎉 All habits completed!");

@@ -498,8 +498,16 @@ export const useRoutineStore = create<RoutineStore>()((set, get) => ({
     const routine = get().getRoutineById(routineId);
     if (!routine) return { completed: 0, total: 0, percentage: 0 };
 
-    const log = get().getRoutineLogForDate(routineId, date);
-    const completed = log?.completedHabits.length || 0;
+    // Get current habit completion status from habit store
+    const { getHabitLogsForDate } = useHabitStore.getState();
+    const habitLogs = getHabitLogsForDate(date);
+
+    // Count completed habits based on actual habit logs
+    const completedHabits = routine.habitIds.filter((habitId) =>
+      habitLogs.some((log) => log.habitId === habitId && log.completed)
+    );
+
+    const completed = completedHabits.length;
     const total = routine.habitIds.length;
     const percentage = total > 0 ? (completed / total) * 100 : 0;
 
@@ -549,5 +557,16 @@ export const useRoutineStore = create<RoutineStore>()((set, get) => ({
 useAuthStore.subscribe((state, prevState) => {
   if (state.user?.id !== prevState?.user?.id) {
     useRoutineStore.getState().fetchUserRoutineData();
+  }
+});
+
+// Subscribe to habit store changes to update routine progress
+useHabitStore.subscribe(() => {
+  // Force re-render of routine components when habit logs change
+  // This ensures routine progress updates in real-time
+  const routineStore = useRoutineStore.getState();
+  if (routineStore.routines.length > 0) {
+    // Trigger a state update to force re-render
+    useRoutineStore.setState((state) => ({ ...state }));
   }
 });

@@ -32,6 +32,8 @@ const RoutineCard = ({ routine, date = new Date() }: RoutineCardProps) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showExecutionModal, setShowExecutionModal] = useState(false);
 
+  console.log(routine);
+
   const formattedDate = formatDateToYYYYMMDD(date);
   const streak = getRoutineStreak(routine.id).current;
   const progress = getRoutineProgress(routine.id, formattedDate);

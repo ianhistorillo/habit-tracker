@@ -23,30 +23,18 @@ interface HabitCardProps {
 const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
   const {
     toggleHabitCompletion,
-    updateHabitValue,
     archiveHabit,
     getHabitStreak,
+    getHabitLogsForDate,
   } = useHabitStore();
   const [showMenu, setShowMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const formattedDate = formatDateToYYYYMMDD(date);
-  const logs = useHabitStore((state) =>
-    state.logs.filter(
-      (log) => log.habitId === habit.id && log.date === formattedDate
-    )
-  );
-  const log = logs.length > 0 ? logs[0] : null;
-  const isCompletedFromStore = log?.completed || false;
-
-  // Local state for real-time UI update
-  const [localCompleted, setLocalCompleted] = useState(isCompletedFromStore);
-
-  // Sync local state if store updates
-  useEffect(() => {
-    setLocalCompleted(isCompletedFromStore);
-  }, [isCompletedFromStore]);
+  const logs = getHabitLogsForDate(formattedDate);
+  const log = logs.find((log) => log.habitId === habit.id);
+  const isCompleted = log?.completed || false;
 
   const streak = getHabitStreak(habit.id).current;
 
@@ -63,22 +51,27 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
 
   const handleToggleComplete = async () => {
     setIsAnimating(true);
-    const newStatus = !localCompleted;
-    setLocalCompleted(newStatus); // Optimistic UI update
 
-    await toggleHabitCompletion(habit.id, formattedDate);
+    try {
+      // Use toggleHabitCompletion which handles both complete and incomplete states
+      await toggleHabitCompletion(habit.id, formattedDate);
 
-    if (newStatus) {
-      toast.success("Great job! Habit marked as complete 🎉", {
-        description: streak > 0 ? `You're on a ${streak + 1} day streak!` : undefined,
-      });
-    } else {
-      toast.info("Progress removed for today");
+      if (!isCompleted) {
+        toast.success("Great job! Habit marked as complete 🎉", {
+          description:
+            streak > 0 ? `You're on a ${streak + 1} day streak!` : undefined,
+        });
+      } else {
+        toast.info("Progress removed for today");
+      }
+    } catch (error) {
+      console.error("Error toggling habit:", error);
+      toast.error("Failed to update habit");
+    } finally {
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 300);
     }
-
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 300);
   };
 
   const handleArchive = () => {
@@ -163,22 +156,22 @@ const HabitCard = ({ habit, date = new Date() }: HabitCardProps) => {
             onClick={handleToggleComplete}
             animate={{
               scale: isAnimating ? [1, 0.95, 1] : 1,
-              backgroundColor: localCompleted ? habit.color : undefined,
+              backgroundColor: isCompleted ? habit.color : undefined,
             }}
             transition={{ duration: 0.2 }}
             className={`mt-2 flex w-full items-center justify-center rounded-md py-2 transition-colors ${
-              localCompleted
+              isCompleted
                 ? "text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             }`}
             style={{
-              backgroundColor: localCompleted ? habit.color : undefined,
+              backgroundColor: isCompleted ? habit.color : undefined,
             }}
           >
             <span className="mr-2">
-              {localCompleted ? "Completed" : "Mark as Done"}
+              {isCompleted ? "Completed" : "Mark as Done"}
             </span>
-            {localCompleted && <CheckCircle size={18} />}
+            {isCompleted && <CheckCircle size={18} />}
           </motion.button>
         </div>
       </motion.div>

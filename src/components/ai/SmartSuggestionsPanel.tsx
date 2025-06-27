@@ -29,8 +29,9 @@ const SmartSuggestionsPanel = ({
   const [loading, setLoading] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<SmartSuggestion | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
 
-  const { habits, logs, addHabit } = useHabitStore();
+  const { habits, logs, addHabit, getActiveHabits } = useHabitStore();
   const { routines, addRoutine } = useRoutineStore();
 
   useEffect(() => {
@@ -57,10 +58,53 @@ const SmartSuggestionsPanel = ({
   };
 
   const handleApplySuggestion = async (suggestion: SmartSuggestion) => {
+    if (isApplying) return;
+
     try {
+      setIsApplying(true);
+
       if (suggestion.type === "routine" && suggestion.actionData.templateId) {
         // Handle routine template application
-        toast.success("Routine template applied!");
+        const routineData = suggestion.actionData.routineData;
+        if (routineData) {
+          // Get existing habits to check for duplicates
+          const existingHabits = getActiveHabits();
+          const habitIds: string[] = [];
+
+          // For AI suggestions, we'll create a simple routine with existing habits
+          // or suggest the user to create specific habits first
+          if (existingHabits.length >= 2) {
+            // Use some existing habits for the routine
+            const selectedHabits = existingHabits.slice(
+              0,
+              Math.min(3, existingHabits.length)
+            );
+            habitIds.push(...selectedHabits.map((h) => h.id));
+
+            await addRoutine({
+              name: routineData.name || "AI Suggested Routine",
+              description:
+                routineData.description ||
+                "Routine suggested by AI based on your habits",
+              habitIds: habitIds,
+              color: routineData.color || "#8B5CF6",
+              icon: routineData.icon || "Brain",
+            });
+
+            toast.success(
+              `"${
+                routineData.name || "AI Suggested Routine"
+              }" routine created!`,
+              {
+                description: `Added routine with ${habitIds.length} of your existing habits.`,
+              }
+            );
+          } else {
+            toast.info(
+              "Create more habits first to build AI-suggested routines"
+            );
+          }
+        }
       } else if (
         suggestion.type === "habit" &&
         suggestion.actionData.habitSuggestions
@@ -94,6 +138,8 @@ const SmartSuggestionsPanel = ({
     } catch (error) {
       console.error("Error applying suggestion:", error);
       toast.error("Failed to apply suggestion");
+    } finally {
+      setIsApplying(false);
     }
   };
 
@@ -256,14 +302,23 @@ const SmartSuggestionsPanel = ({
                               }
                               className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                               title="Dismiss"
+                              disabled={isApplying}
                             >
                               <X size={16} />
                             </button>
                             <button
                               onClick={() => handleApplySuggestion(suggestion)}
                               className="btn btn-primary btn-sm"
+                              disabled={isApplying}
                             >
-                              Apply
+                              {isApplying ? (
+                                <div className="flex items-center">
+                                  <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent mr-1" />
+                                  Applying...
+                                </div>
+                              ) : (
+                                "Apply"
+                              )}
                             </button>
                           </div>
                         </div>
@@ -283,7 +338,7 @@ const SmartSuggestionsPanel = ({
                 </div>
                 <button
                   onClick={generateSuggestions}
-                  disabled={loading}
+                  disabled={loading || isApplying}
                   className="btn btn-secondary btn-sm"
                 >
                   <Sparkles size={14} className="mr-1" />

@@ -184,3 +184,72 @@ export interface UserPattern {
   }>;
   lastAnalyzed: string;
 }
+
+// User Profile Types
+export interface UserProfile {
+  id: string;
+  email: string;
+  name?: string;
+  displayName?: string;
+  age?: number;
+  gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
+  occupationCategory?:
+    | "student"
+    | "professional"
+    | "retired"
+    | "unemployed"
+    | "self-employed"
+    | "other";
+  heightCm?: number;
+  weightKg?: number;
+  lifestyleFocus?: LifestyleFocus[];
+  surveyCompleted: boolean;
+  surveyCompletedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type LifestyleFocus =
+  | "health-wellness"
+  | "work-career"
+  | "family-relationship"
+  | "financial"
+  | "social-leisure"
+  | "technological"
+  | "cultural-spiritual"
+  | "environment-ethical";
+
+export interface HabitRecommendation {
+  id: string;
+  userId: string;
+  category: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  color: string;
+  frequency: "daily" | "weekly" | "custom";
+  targetDays: number[];
+  targetValue?: number;
+  unit?: string;
+  reasoning: string;
+  confidenceScore: number;
+  tags: string[];
+  isApplied: boolean;
+  createdAt: string;
+}
+
+export interface SurveyData {
+  displayName: string;
+  age: number;
+  gender: "male" | "female" | "non-binary" | "prefer-not-to-say";
+  occupationCategory:
+    | "student"
+    | "professional"
+    | "retired"
+    | "unemployed"
+    | "self-employed"
+    | "other";
+  heightCm?: number;
+  weightKg?: number;
+  lifestyleFocus: LifestyleFocus[];
+}

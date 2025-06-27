@@ -19,6 +19,7 @@ interface RoutineStore {
     routine: Partial<Omit<Routine, "id" | "createdAt">>
   ) => Promise<void>;
   archiveRoutine: (id: string) => Promise<void>;
+  restoreRoutine: (id: string) => Promise<void>;
   deleteRoutine: (id: string) => Promise<void>;
 
   // Routine Log Actions
@@ -284,6 +285,31 @@ export const useRoutineStore = create<RoutineStore>()((set, get) => ({
     } catch (error) {
       console.error("Error archiving routine:", error);
       toast.error("Failed to archive routine");
+      set({ loading: false });
+    }
+  },
+
+  restoreRoutine: async (id) => {
+    try {
+      set({ loading: true });
+      const { error } = await supabase
+        .from("routines")
+        .update({ archived_at: null })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      set((state) => ({
+        routines: state.routines.map((routine) =>
+          routine.id === id ? { ...routine, archivedAt: undefined } : routine
+        ),
+        loading: false,
+      }));
+
+      toast.success("Routine restored successfully");
+    } catch (error) {
+      console.error("Error restoring routine:", error);
+      toast.error("Failed to restore routine");
       set({ loading: false });
     }
   },

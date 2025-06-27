@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { supabase } from "../lib/supabase";
 import { User } from "@supabase/supabase-js";
-import { toast } from "sonner";
 
 interface AuthState {
   user: User | null;
@@ -12,55 +11,33 @@ interface AuthState {
   initialize: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   loading: true,
 
   signUp: async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-      if (error) throw error;
-
-      toast.success("Registration successful! You can now sign in.");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to sign up");
-      throw error;
-    }
+    if (error) throw error;
   },
 
   signIn: async (email: string, password: string) => {
-    try {
-      const { error, data } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const { error, data } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      if (error) throw error;
-
-      set({ user: data.user });
-      toast.success("Welcome back!");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to sign in");
-      throw error;
-    }
+    if (error) throw error;
+    set({ user: data.user });
   },
 
   signOut: async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      set({ user: null });
-      toast.success("Signed out successfully");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to sign out"
-      );
-      throw error;
-    }
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    set({ user: null });
   },
 
   initialize: async () => {
@@ -68,11 +45,24 @@ export const useAuthStore = create<AuthState>((set) => ({
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      console.log("Auth initialized, session:", !!session);
       set({ user: session?.user || null, loading: false });
 
-      // Listen for auth changes
       supabase.auth.onAuthStateChange((_event, session) => {
-        set({ user: session?.user || null });
+        const newUser = session?.user || null;
+        const currentUser = get().user;
+
+        console.log("Auth state changed:", {
+          event: _event,
+          newUserId: newUser?.id,
+          currentUserId: currentUser?.id,
+        });
+
+        // Only update if user actually changed
+        if (newUser?.id !== currentUser?.id) {
+          console.log("User changed, updating state");
+          set({ user: newUser });
+        }
       });
     } catch (error) {
       console.error("Error initializing auth:", error);

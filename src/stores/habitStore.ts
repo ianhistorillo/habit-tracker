@@ -22,12 +22,13 @@ interface HabitStore {
   // Habit Actions
   addHabit: (
     habit: Omit<Habit, "id" | "createdAt" | "userId">
-  ) => Promise<void>;
+  ) => Promise<Habit>;
   updateHabit: (
     id: string,
     habit: Partial<Omit<Habit, "id" | "createdAt" | "userId">>
   ) => Promise<void>;
   archiveHabit: (id: string) => Promise<void>;
+  restoreHabit: (id: string) => Promise<void>;
   deleteHabit: (id: string) => Promise<void>;
 
   // Log Actions
@@ -39,7 +40,7 @@ interface HabitStore {
   updateHabitValue: (
     habitId: string,
     date: string,
-    value?: number
+    value: number
   ) => Promise<void>;
   updateHabitNote: (
     habitId: string,
@@ -151,7 +152,7 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
   // Habit Actions
   addHabit: async (habitData) => {
     const user = useAuthStore.getState().user;
-    if (!user) return;
+    if (!user) throw new Error("User not authenticated");
 
     try {
       // Transform the data to match the database schema
@@ -199,10 +200,10 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
         ],
       }));
 
-      toast.success("Habit created successfully");
+      return newHabit;
     } catch (error) {
       console.error("Error creating habit:", error);
-      toast.error("Failed to create habit");
+      throw error;
     }
   },
 
@@ -264,6 +265,28 @@ export const useHabitStore = create<HabitStore>()((set, get) => ({
     } catch (error) {
       console.error("Error archiving habit:", error);
       toast.error("Failed to archive habit");
+    }
+  },
+
+  restoreHabit: async (id) => {
+    try {
+      const { error } = await supabase
+        .from("habits")
+        .update({ archived_at: null })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      set((state) => ({
+        habits: state.habits.map((habit) =>
+          habit.id === id ? { ...habit, archivedAt: undefined } : habit
+        ),
+      }));
+
+      toast.success("Habit restored successfully");
+    } catch (error) {
+      console.error("Error restoring habit:", error);
+      toast.error("Failed to restore habit");
     }
   },
 

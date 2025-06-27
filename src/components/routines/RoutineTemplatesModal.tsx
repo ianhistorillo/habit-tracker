@@ -46,9 +46,10 @@ const RoutineTemplatesModal = ({ onClose }: RoutineTemplatesModalProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTemplate, setSelectedTemplate] =
     useState<RoutineTemplate | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const { addRoutine } = useRoutineStore();
-  const { addHabit } = useHabitStore();
+  const { addHabit, getActiveHabits } = useHabitStore();
 
   const categories = [
     "all",
@@ -68,44 +69,86 @@ const RoutineTemplatesModal = ({ onClose }: RoutineTemplatesModalProps) => {
   const popularTemplates = getPopularTemplates(3);
 
   const handleUseTemplate = async (template: RoutineTemplate) => {
+    if (isCreating) return;
+
     try {
-      // First, create the habits
+      setIsCreating(true);
+
+      // Get existing habits to avoid duplicates
+      const existingHabits = getActiveHabits();
       const habitIds: string[] = [];
 
+      // Create habits that don't already exist
       for (const habitData of template.habits) {
-        await addHabit({
-          name: habitData.name,
-          description: habitData.description,
-          icon: habitData.icon,
-          color: template.color,
-          frequency: habitData.frequency,
-          targetDays: habitData.targetDays,
-          targetValue: habitData.targetValue,
-          unit: habitData.unit,
-        });
+        // Check if a similar habit already exists
+        const existingHabit = existingHabits.find(
+          (h) => h.name.toLowerCase() === habitData.name.toLowerCase()
+        );
 
-        // Note: In a real implementation, you'd get the actual habit ID from the response
-        // For now, we'll simulate this
-        habitIds.push(`habit-${Date.now()}-${Math.random()}`);
+        if (existingHabit) {
+          // Use existing habit
+          habitIds.push(existingHabit.id);
+          toast.info(`Using existing habit: ${existingHabit.name}`);
+        } else {
+          // Create new habit
+          try {
+            await addHabit({
+              name: habitData.name,
+              description: habitData.description,
+              icon: habitData.icon,
+              color: template.color,
+              frequency: habitData.frequency,
+              targetDays: habitData.targetDays,
+              targetValue: habitData.targetValue,
+              unit: habitData.unit,
+            });
+
+            // Get the newly created habit ID
+            // Since we can't get the ID directly from addHabit, we'll find it by name
+            // This is a temporary solution - ideally addHabit should return the created habit
+            const updatedHabits = getActiveHabits();
+            const newHabit = updatedHabits.find(
+              (h) =>
+                h.name === habitData.name &&
+                !existingHabits.some((eh) => eh.id === h.id)
+            );
+
+            if (newHabit) {
+              habitIds.push(newHabit.id);
+            }
+          } catch (error) {
+            console.error(`Error creating habit ${habitData.name}:`, error);
+            toast.error(`Failed to create habit: ${habitData.name}`);
+          }
+        }
       }
 
-      // Then create the routine with the habit IDs
-      await addRoutine({
-        name: template.name,
-        description: template.description,
-        habitIds: habitIds,
-        color: template.color,
-        icon: template.icon,
-      });
+      // Wait a moment for habits to be created
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      toast.success(`"${template.name}" routine created successfully! 🎉`, {
-        description: `Added ${template.habits.length} habits to your routine.`,
-      });
+      // Create the routine with the habit IDs
+      if (habitIds.length > 0) {
+        await addRoutine({
+          name: template.name,
+          description: template.description,
+          habitIds: habitIds,
+          color: template.color,
+          icon: template.icon,
+        });
 
-      onClose();
+        toast.success(`"${template.name}" routine created successfully! 🎉`, {
+          description: `Added routine with ${habitIds.length} habits.`,
+        });
+
+        onClose();
+      } else {
+        toast.error("Failed to create routine - no habits were created");
+      }
     } catch (error) {
       console.error("Error creating routine from template:", error);
       toast.error("Failed to create routine from template");
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -231,6 +274,7 @@ const RoutineTemplatesModal = ({ onClose }: RoutineTemplatesModalProps) => {
               type="button"
               className="btn btn-secondary"
               onClick={() => setSelectedTemplate(null)}
+              disabled={isCreating}
             >
               Back
             </button>
@@ -238,9 +282,19 @@ const RoutineTemplatesModal = ({ onClose }: RoutineTemplatesModalProps) => {
               type="button"
               className="btn btn-primary"
               onClick={() => handleUseTemplate(selectedTemplate)}
+              disabled={isCreating}
             >
-              <Sparkles size={16} className="mr-2" />
-              Use This Template
+              {isCreating ? (
+                <div className="flex items-center">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                  Creating...
+                </div>
+              ) : (
+                <>
+                  <Sparkles size={16} className="mr-2" />
+                  Use This Template
+                </>
+              )}
             </button>
           </div>
         </div>

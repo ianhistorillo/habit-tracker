@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Activity, Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { useAuthStore } from "../../src/stores/authStore";
 import ForgotPasswordModal from "../components/auth/ForgotPasswordModal";
 import ResetPasswordForm from "../components/auth/ResetPasswordForm";
@@ -37,9 +38,11 @@ const AuthPage = () => {
       } else {
         await signUp(email, password);
         setIsLogin(true);
+        toast.success("Account created successfully! Please sign in.");
       }
     } catch (error) {
-      // Error is handled in the store
+      const errorMessage = error instanceof Error ? error.message : 'Authentication failed. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

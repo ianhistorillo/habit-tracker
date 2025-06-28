@@ -1,13 +1,5 @@
-import { NavLink } from "react-router-dom";
-import {
-  Activity,
-  Calendar,
-  LineChart,
-  Settings,
-  Home,
-  Target,
-  Layers,
-} from "lucide-react";
+import { NavLink } from 'react-router-dom';
+import { Activity, Calendar, LineChart, Settings, Home, Target, Layers, Brain } from 'lucide-react';
 
 interface SidebarProps {
   closeMobileMenu: () => void;
@@ -16,38 +8,43 @@ interface SidebarProps {
 export default function Sidebar({ closeMobileMenu }: SidebarProps) {
   const navItems = [
     {
-      name: "Dashboard",
-      path: "/app",
+      name: 'Dashboard',
+      path: '/app',
       icon: <Home size={20} />,
     },
     {
-      name: "My Habits",
-      path: "/app/habits",
+      name: 'My Habits',
+      path: '/app/habits',
       icon: <Activity size={20} />,
     },
     {
-      name: "Routines",
-      path: "/app/routines",
+      name: 'Routines',
+      path: '/app/routines',
       icon: <Layers size={20} />,
     },
     {
-      name: "Calendar",
-      path: "/app/calendar",
+      name: 'Calendar',
+      path: '/app/calendar',
       icon: <Calendar size={20} />,
     },
     {
-      name: "Planner",
-      path: "/app/planner",
+      name: 'Planner',
+      path: '/app/planner',
       icon: <Target size={20} />,
     },
     {
-      name: "Reports",
-      path: "/app/reports",
+      name: 'AI Coach',
+      path: '/app/coach',
+      icon: <Brain size={20} />,
+    },
+    {
+      name: 'Reports',
+      path: '/app/reports',
       icon: <LineChart size={20} />,
     },
     {
-      name: "Settings",
-      path: "/app/settings",
+      name: 'Settings',
+      path: '/app/settings',
       icon: <Settings size={20} />,
     },
   ];
@@ -79,8 +76,8 @@ export default function Sidebar({ closeMobileMenu }: SidebarProps) {
             className={({ isActive }) =>
               `flex items-center rounded-md px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-400"
-                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                  ? 'bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-400'
+                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
               }`
             }
           >

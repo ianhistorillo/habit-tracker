@@ -128,6 +128,8 @@ const FloatingChatbot = () => {
 
     try {
       const API_URL = import.meta.env.VITE_AI_COACH_API_URL;
+
+      console.log("🧠 Hitting AI Coach API at:", API_URL);
       
       if (!API_URL) {
         throw new Error('AI Coach service is not configured');
@@ -141,12 +143,7 @@ const FloatingChatbot = () => {
         goal: formData.goal,
         currentHabits: formData.currentHabits,
         struggles: formData.struggles,
-        timePerDay: formData.timePerDay,
-        profile: profile ? {
-          age: profile.age,
-          occupation: profile.occupationCategory,
-          lifestyleFocus: profile.lifestyleFocus
-        } : null
+        timePerDay: formData.timePerDay
       };
 
       const headers: Record<string, string> = {

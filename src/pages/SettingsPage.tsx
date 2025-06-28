@@ -44,7 +44,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-8">
       <div className="card">
         <h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white">
           Settings

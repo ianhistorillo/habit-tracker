@@ -95,7 +95,7 @@ const ReportsPage = () => {
   const topHabitsByStreak = habitStreaks.slice(0, 3);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-8">
       <div className="card">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">

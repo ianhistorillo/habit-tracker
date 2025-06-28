@@ -63,7 +63,7 @@ const CalendarPage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-8">
       <div className="card">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white">

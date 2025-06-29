@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Activity,
   Sparkles,
@@ -32,6 +32,7 @@ const Dashboard = () => {
   const { profile } = useProfileStore();
   const {
     getActiveHabits,
+    getHabitLogsForDate,
     isHabitDueToday,
     getCompletionRateForDate,
     getHabitStreak,
@@ -45,6 +46,10 @@ const Dashboard = () => {
   const activeHabits = getActiveHabits();
   const habitsForToday = activeHabits.filter((habit) => isHabitDueToday(habit));
   const completionRate = getCompletionRateForDate(formattedToday);
+  const completedHabitsToday = habitsForToday.filter(habit => {
+    const logs = getHabitLogsForDate(formattedToday);
+    return logs.some(log => log.habitId === habit.id && log.completed);
+  });
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -276,10 +281,7 @@ const Dashboard = () => {
             </h2>
             <div className="flex items-center space-x-2">
               <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 dark:bg-primary-900/30 dark:text-primary-300">
-                {habitsForToday.filter(habit => {
-                  const logs = useHabitStore.getState().getHabitLogsForDate(formattedToday);
-                  return logs.some(log => log.habitId === habit.id && log.completed);
-                }).length} / {habitsForToday.length} Complete
+                {completedHabitsToday.length} / {habitsForToday.length} Complete
               </span>
             </div>
           </div>

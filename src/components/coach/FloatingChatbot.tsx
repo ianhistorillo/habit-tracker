@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Brain, MessageCircle, Send, X, Minimize2, Maximize2, Target, Clock, AlertCircle, Loader, Wifi, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useHabitStore } from '../../stores/habitStore';
@@ -30,6 +30,8 @@ const FloatingChatbot = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showHint, setShowHint] = useState(false);
+  const [hintText, setHintText] = useState('');
   
   // Form state
   const [formData, setFormData] = useState<CoachFormData>({
@@ -40,6 +42,35 @@ const FloatingChatbot = () => {
   });
 
   const activeHabits = getActiveHabits();
+
+  // Animated hints for the floating button
+  const hints = [
+    "💡 Need habit advice?",
+    "🎯 Struggling with consistency?", 
+    "⚡ Want personalized tips?",
+    "🧠 Ask your AI coach!",
+    "🌟 Ready to level up?",
+    "💪 Build better habits!",
+    "🚀 Get unstuck today!"
+  ];
+
+  const showRandomHint = useCallback(() => {
+    if (!isOpen) {
+      const randomHint = hints[Math.floor(Math.random() * hints.length)];
+      setHintText(randomHint);
+      setShowHint(true);
+      
+      setTimeout(() => {
+        setShowHint(false);
+      }, 3000);
+    }
+  }, [isOpen, hints]);
+
+  // Show hints periodically
+  useEffect(() => {
+    const interval = setInterval(showRandomHint, 8000 + Math.random() * 7000); // 8-15 seconds
+    return () => clearInterval(interval);
+  }, [showRandomHint]);
 
   // Initialize form with user's current habits
   useEffect(() => {
@@ -128,8 +159,6 @@ const FloatingChatbot = () => {
 
     try {
       const API_URL = import.meta.env.VITE_AI_COACH_API_URL;
-
-      console.log("🧠 Hitting AI Coach API at:", API_URL);
       
       if (!API_URL) {
         throw new Error('AI Coach service is not configured');
@@ -143,7 +172,12 @@ const FloatingChatbot = () => {
         goal: formData.goal,
         currentHabits: formData.currentHabits,
         struggles: formData.struggles,
-        timePerDay: formData.timePerDay
+        timePerDay: formData.timePerDay,
+        profile: profile ? {
+          age: profile.age,
+          occupation: profile.occupationCategory,
+          lifestyleFocus: profile.lifestyleFocus
+        } : null
       };
 
       const headers: Record<string, string> = {
@@ -361,19 +395,73 @@ const FloatingChatbot = () => {
 
   return (
     <>
+      {/* Animated Hint Bubble */}
+      <AnimatePresence>
+        {showHint && !isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.8, x: 20 }}
+            className="fixed bottom-20 right-6 z-40 max-w-xs"
+          >
+            <div className="relative rounded-2xl bg-white p-4 shadow-xl dark:bg-gray-800">
+              <div className="flex items-center space-x-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500">
+                  <Brain size={16} className="text-white" />
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {hintText}
+                </p>
+              </div>
+              {/* Arrow pointing to button */}
+              <div className="absolute -bottom-2 right-8 h-4 w-4 rotate-45 bg-white dark:bg-gray-800"></div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Floating Chat Button */}
       <AnimatePresence>
         {!isOpen && (
-          <motion.button
-            data-chatbot
+          <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transition-all hover:shadow-xl hover:scale-110"
+            className="fixed bottom-6 right-6 z-50"
           >
-            <Brain size={24} />
-          </motion.button>
+            <motion.button
+              data-chatbot
+              onClick={() => {
+                setIsOpen(true);
+                setShowHint(false);
+              }}
+              className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transition-all hover:shadow-xl"
+              whileHover={{ 
+                scale: 1.1,
+                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              animate={{
+                y: [0, -8, 0],
+              }}
+              transition={{
+                y: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
+              }}
+            >
+              <Brain size={28} />
+              
+              {/* Pulsing ring animation */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-2 border-purple-300"
+                animate={{ scale: [1, 1.3, 1], opacity: [0.7, 0, 0.7] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 

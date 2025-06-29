@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Activity,
@@ -18,6 +18,8 @@ import {
   Star,
   ArrowRight,
   Play,
+  MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -26,6 +28,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
 
   const handleEnquiry = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +37,14 @@ const LandingPage = () => {
     setEmail("");
     setMessage("");
   };
+
+  // Rotate through features for the AI Coach section
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFeatureIndex((prev) => (prev + 1) % 4);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const features = [
     {
@@ -88,6 +99,20 @@ const LandingPage = () => {
       content: "I recommend Trackbit to all my clients. The routine builder is a game-changer!",
       avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face"
     },
+  ];
+
+  const aiCoachFeatures = [
+    { icon: <Brain />, title: "Personalized AI Insights", description: "Get tailored advice based on your goals and lifestyle" },
+    { icon: <Target />, title: "Smart Goal Setting", description: "Set achievable goals with science-backed strategies" },
+    { icon: <MessageCircle />, title: "24/7 Chat Support", description: "Ask questions anytime and get instant guidance" },
+    { icon: <TrendingUp />, title: "Progress Optimization", description: "Continuous improvement suggestions based on your data" }
+  ];
+
+  const coachingBenefits = [
+    "Overcome habit formation challenges",
+    "Get personalized motivation strategies", 
+    "Receive science-backed recommendations",
+    "Track progress with AI insights"
   ];
 
   return (
@@ -245,7 +270,7 @@ const LandingPage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -255,22 +280,206 @@ const LandingPage = () => {
             className="text-center"
           >
             <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-              Loved by Thousands
+              Meet Your AI Habit Coach
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-xl text-gray-600">
-              See what our users are saying about their transformation journey
+              Get personalized coaching powered by artificial intelligence
             </p>
           </motion.div>
 
-          <div className="mt-16 grid gap-8 lg:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
+          {/* AI Coach Hero */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="mt-16 rounded-3xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 p-8 text-white shadow-2xl lg:p-12"
+          >
+            <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+              <div>
+                <div className="mb-6 inline-flex items-center rounded-full bg-white/20 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  AI-Powered Personal Coach
+                </div>
+                <h3 className="text-3xl font-bold lg:text-4xl">
+                  Your Personal Habit Coach
+                </h3>
+                <p className="mt-4 text-lg text-purple-100">
+                  Share your goals, struggles, and available time to receive tailored strategies 
+                  for building better habits and achieving lasting change.
+                </p>
+                
+                <div className="mt-8 space-y-4">
+                  {coachingBenefits.map((benefit, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="flex items-center space-x-3"
+                    >
+                      <CheckCircle className="h-5 w-5 text-green-300" />
+                      <span className="text-purple-100">{benefit}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div className="mt-8">
+                  <button
+                    onClick={() => navigate("/auth")}
+                    className="btn bg-white text-purple-600 hover:bg-gray-100"
+                  >
+                    <Brain size={16} className="mr-2" />
+                    Try AI Coach Free
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative">
+                {/* Animated Feature Cards */}
+                <div className="relative h-80 overflow-hidden">
+                  {aiCoachFeatures.map((feature, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                      animate={{
+                        opacity: currentFeatureIndex === index ? 1 : 0.3,
+                        y: currentFeatureIndex === index ? 0 : 20,
+                        scale: currentFeatureIndex === index ? 1 : 0.95,
+                        zIndex: currentFeatureIndex === index ? 10 : 1
+                      }}
+                      transition={{ duration: 0.8, ease: "easeInOut" }}
+                      className="absolute inset-0 rounded-2xl bg-white/10 p-6 backdrop-blur-sm"
+                    >
+                      <div className="flex items-start space-x-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
+                          {feature.icon}
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-semibold text-white">
+                            {feature.title}
+                          </h4>
+                          <p className="mt-2 text-purple-100">
+                            {feature.description}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Chat Preview */}
+                      <div className="mt-6 space-y-3">
+                        <div className="flex justify-end">
+                          <div className="rounded-lg bg-white/20 px-3 py-2 text-sm">
+                            "I struggle with consistency"
+                          </div>
+                        </div>
+                        <div className="flex justify-start">
+                          <div className="rounded-lg bg-white px-3 py-2 text-sm text-purple-600">
+                            "Let's start with the 2-minute rule..."
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Feature Indicators */}
+                <div className="mt-6 flex justify-center space-x-2">
+                  {aiCoachFeatures.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentFeatureIndex(index)}
+                      className={`h-2 w-8 rounded-full transition-all ${
+                        currentFeatureIndex === index
+                          ? 'bg-white'
+                          : 'bg-white/30 hover:bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* How AI Coaching Works */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="mt-16"
+          >
+            <div className="text-center mb-12">
+              <h3 className="text-2xl font-bold text-gray-900">
+                How AI Coaching Works
+              </h3>
+              <p className="mt-2 text-gray-600">
+                Get personalized guidance in three simple steps
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3">
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                  <span className="text-xl font-bold">1</span>
+                </div>
+                <h4 className="mb-2 text-lg font-semibold text-gray-900">
+                  Share Your Goals
+                </h4>
+                <p className="text-gray-600">
+                  Tell us about your objectives, current habits, and challenges
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                  <span className="text-xl font-bold">2</span>
+                </div>
+                <h4 className="mb-2 text-lg font-semibold text-gray-900">
+                  Get AI Analysis
+                </h4>
+                <p className="text-gray-600">
+                  Our AI creates a personalized coaching strategy for you
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-red-500 text-white">
+                  <span className="text-xl font-bold">3</span>
+                </div>
+                <h4 className="mb-2 text-lg font-semibold text-gray-900">
+                  Receive Guidance
+                </h4>
+                <p className="text-gray-600">
+                  Get actionable advice and ongoing support through chat
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* User Testimonials */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="mt-16"
+          >
+            <div className="text-center mb-12">
+              <h3 className="text-2xl font-bold text-gray-900">
+                What Our Users Say
+              </h3>
+            </div>
+            
+            <div className="grid gap-8 lg:grid-cols-3">
+              {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="rounded-2xl bg-white p-8 shadow-lg"
+                className="rounded-2xl bg-gray-50 p-8 shadow-lg"
               >
                 <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
@@ -291,12 +500,13 @@ const LandingPage = () => {
                 </div>
               </motion.div>
             ))}
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Why Habits Matter Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
             <motion.div

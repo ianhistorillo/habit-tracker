@@ -24,6 +24,7 @@ const FloatingChatbot = () => {
   const { profile } = useProfileStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [step, setStep] = useState<'welcome' | 'form' | 'chat'>('welcome');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -43,6 +44,29 @@ const FloatingChatbot = () => {
 
   const activeHabits = getActiveHabits();
 
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Prevent body scroll when mobile chat is open
+  useEffect(() => {
+    if (isMobile && isOpen && !isMinimized) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobile, isOpen, isMinimized]);
   // Animated hints for the floating button
   const hints = [
     "💡 Need habit advice?",
@@ -393,6 +417,38 @@ const FloatingChatbot = () => {
     }));
   };
 
+  // Get container styles based on device type
+  const getContainerStyles = () => {
+    if (isMobile && isOpen && !isMinimized) {
+      return {
+        position: 'fixed' as const,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 60,
+        borderRadius: 0,
+      };
+    }
+    
+    return {
+      position: 'fixed' as const,
+      bottom: '1.5rem',
+      right: '1.5rem',
+      zIndex: 50,
+      width: '20rem',
+      borderRadius: '0.5rem',
+    };
+  };
+
+  const getChatHeight = () => {
+    if (isMobile && isOpen && !isMinimized) {
+      return 'calc(100vh - 4rem)'; // Full height minus header
+    }
+    return '24rem'; // 384px
+  };
   return (
     <>
       {/* Animated Hint Bubble */}
@@ -402,7 +458,9 @@ const FloatingChatbot = () => {
             initial={{ opacity: 0, scale: 0.8, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.8, x: 20 }}
-            className="fixed bottom-20 right-6 z-40 max-w-xs"
+            className={`fixed z-40 max-w-xs ${
+              isMobile ? 'bottom-20 right-4 left-4' : 'bottom-20 right-6'
+            }`}
           >
             <div className="relative rounded-2xl bg-white p-4 shadow-xl dark:bg-gray-800">
               <div className="flex items-center space-x-3">
@@ -414,7 +472,9 @@ const FloatingChatbot = () => {
                 </p>
               </div>
               {/* Arrow pointing to button */}
-              <div className="absolute -bottom-2 right-8 h-4 w-4 rotate-45 bg-white dark:bg-gray-800"></div>
+              <div className={`absolute -bottom-2 h-4 w-4 rotate-45 bg-white dark:bg-gray-800 ${
+                isMobile ? 'right-8' : 'right-8'
+              }`}></div>
             </div>
           </motion.div>
         )}
@@ -427,7 +487,9 @@ const FloatingChatbot = () => {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="fixed bottom-6 right-6 z-50"
+            className={`fixed z-50 ${
+              isMobile ? 'bottom-4 right-4' : 'bottom-6 right-6'
+            }`}
           >
             <motion.button
               data-chatbot
@@ -435,7 +497,9 @@ const FloatingChatbot = () => {
                 setIsOpen(true);
                 setShowHint(false);
               }}
-              className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transition-all hover:shadow-xl"
+              className={`relative flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transition-all hover:shadow-xl ${
+                isMobile ? 'h-14 w-14' : 'h-16 w-16'
+              }`}
               whileHover={{ 
                 scale: 1.1,
                 boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
@@ -452,7 +516,7 @@ const FloatingChatbot = () => {
                 }
               }}
             >
-              <Brain size={28} />
+              <Brain size={isMobile ? 24 : 28} />
               
               {/* Pulsing ring animation */}
               <motion.div
@@ -474,13 +538,16 @@ const FloatingChatbot = () => {
               opacity: 1, 
               scale: 1, 
               y: 0,
-              height: isMinimized ? 'auto' : '500px'
+              height: isMinimized ? 'auto' : getChatHeight()
             }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="fixed bottom-6 right-6 z-50 w-80 rounded-lg bg-white shadow-2xl dark:bg-gray-800 overflow-hidden"
+            className="bg-white shadow-2xl dark:bg-gray-800 overflow-hidden"
+            style={getContainerStyles()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white">
+            <div className={`flex items-center justify-between bg-gradient-to-r from-purple-500 to-pink-500 text-white ${
+              isMobile ? 'p-4 pt-6' : 'p-4'
+            }`}>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center">
                   <Brain size={20} />
@@ -500,12 +567,14 @@ const FloatingChatbot = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-1">
-                <button
-                  onClick={() => setIsMinimized(!isMinimized)}
-                  className="rounded p-1 hover:bg-white/20"
-                >
-                  {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
-                </button>
+                {!isMobile && (
+                  <button
+                    onClick={() => setIsMinimized(!isMinimized)}
+                    className="rounded p-1 hover:bg-white/20"
+                  >
+                    {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+                  </button>
+                )}
                 <button
                   onClick={() => setIsOpen(false)}
                   className="rounded p-1 hover:bg-white/20"
@@ -517,9 +586,9 @@ const FloatingChatbot = () => {
 
             {/* Content */}
             {!isMinimized && (
-              <div className="flex h-96 flex-col">
+              <div className="flex flex-col" style={{ height: getChatHeight() }}>
                 {step === 'welcome' && (
-                  <div className="flex-1 p-4">
+                  <div className={`flex-1 ${isMobile ? 'p-6' : 'p-4'}`}>
                     <div className="text-center">
                       <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30">
                         <Brain size={32} className="text-purple-600 dark:text-purple-400" />
@@ -563,7 +632,7 @@ const FloatingChatbot = () => {
                 )}
 
                 {step === 'form' && (
-                  <div className="flex-1 overflow-y-auto p-4">
+                  <div className={`flex-1 overflow-y-auto ${isMobile ? 'p-6' : 'p-4'}`}>
                     <form onSubmit={handleFormSubmit} className="space-y-4">
                       {/* Goal */}
                       <div>
@@ -573,8 +642,8 @@ const FloatingChatbot = () => {
                         <textarea
                           value={formData.goal}
                           onChange={(e) => setFormData(prev => ({ ...prev, goal: e.target.value }))}
-                          className="input w-full resize-none text-sm"
-                          rows={2}
+                          className={`input w-full resize-none ${isMobile ? 'text-base' : 'text-sm'}`}
+                          rows={isMobile ? 3 : 2}
                           placeholder="e.g., sleep better, be more productive..."
                           required
                         />
@@ -590,7 +659,9 @@ const FloatingChatbot = () => {
                             {formData.currentHabits.map((habit, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center rounded-full bg-primary-100 px-2 py-1 text-xs font-medium text-primary-800 dark:bg-primary-900/30 dark:text-primary-300"
+                                className={`inline-flex items-center rounded-full bg-primary-100 px-2 py-1 font-medium text-primary-800 dark:bg-primary-900/30 dark:text-primary-300 ${
+                                  isMobile ? 'text-sm' : 'text-xs'
+                                }`}
                               >
                                 {habit}
                                 <button
@@ -598,14 +669,14 @@ const FloatingChatbot = () => {
                                   onClick={() => removeCurrentHabit(habit)}
                                   className="ml-1 text-primary-600 hover:text-primary-800 dark:text-primary-400"
                                 >
-                                  <X size={12} />
+                                  <X size={isMobile ? 14 : 12} />
                                 </button>
                               </span>
                             ))}
                           </div>
                           <input
                             type="text"
-                            className="input w-full text-sm"
+                            className={`input w-full ${isMobile ? 'text-base' : 'text-sm'}`}
                             placeholder="Add habit (press Enter)"
                             onKeyPress={(e) => {
                               if (e.key === 'Enter') {
@@ -628,7 +699,9 @@ const FloatingChatbot = () => {
                             {formData.struggles.map((struggle, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                                className={`inline-flex items-center rounded-full bg-red-100 px-2 py-1 font-medium text-red-800 dark:bg-red-900/30 dark:text-red-300 ${
+                                  isMobile ? 'text-sm' : 'text-xs'
+                                }`}
                               >
                                 {struggle}
                                 <button
@@ -636,14 +709,14 @@ const FloatingChatbot = () => {
                                   onClick={() => removeStruggle(struggle)}
                                   className="ml-1 text-red-600 hover:text-red-800 dark:text-red-400"
                                 >
-                                  <X size={12} />
+                                  <X size={isMobile ? 14 : 12} />
                                 </button>
                               </span>
                             ))}
                           </div>
                           <input
                             type="text"
-                            className="input w-full text-sm"
+                            className={`input w-full ${isMobile ? 'text-base' : 'text-sm'}`}
                             placeholder="Add struggle (press Enter)"
                             onKeyPress={(e) => {
                               if (e.key === 'Enter') {
@@ -674,7 +747,7 @@ const FloatingChatbot = () => {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="btn btn-primary w-full text-sm"
+                        className={`btn btn-primary w-full ${isMobile ? 'text-base py-3' : 'text-sm'}`}
                       >
                         {loading ? (
                           <div className="flex items-center justify-center">
@@ -692,14 +765,14 @@ const FloatingChatbot = () => {
                 {step === 'chat' && (
                   <>
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                    <div className={`flex-1 overflow-y-auto space-y-3 ${isMobile ? 'p-6' : 'p-4'}`}>
                       {messages.map((message) => (
                         <div
                           key={message.id}
                           className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[85%] rounded-lg p-3 text-sm ${
+                            className={`max-w-[85%] rounded-lg p-3 ${isMobile ? 'text-base' : 'text-sm'} ${
                               message.type === 'user'
                                 ? 'bg-primary-500 text-white'
                                 : message.type === 'system'
@@ -738,7 +811,9 @@ const FloatingChatbot = () => {
                       
                       {loading && (
                         <div className="flex justify-start">
-                          <div className="bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white rounded-lg p-3">
+                          <div className={`bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white rounded-lg p-3 ${
+                            isMobile ? 'text-base' : 'text-sm'
+                          }`}>
                             <div className="flex items-center space-x-2">
                               <Brain size={14} className="text-purple-500" />
                               <div className="flex space-x-1">
@@ -754,7 +829,9 @@ const FloatingChatbot = () => {
                     </div>
 
                     {/* Input */}
-                    <div className="border-t border-gray-200 p-3 dark:border-gray-700">
+                    <div className={`border-t border-gray-200 dark:border-gray-700 ${
+                      isMobile ? 'p-4 pb-6' : 'p-3'
+                    }`}>
                       <div className="flex space-x-2">
                         <input
                           type="text"
@@ -766,21 +843,23 @@ const FloatingChatbot = () => {
                               sendMessage(newMessage);
                             }
                           }}
-                          className="input flex-1 text-sm"
+                          className={`input flex-1 ${isMobile ? 'text-base py-3' : 'text-sm'}`}
                           placeholder={isOfflineMode ? "Ask for habit advice..." : "Ask your coach..."}
                           disabled={loading}
                         />
                         <button
                           onClick={() => sendMessage(newMessage)}
                           disabled={!newMessage.trim() || loading}
-                          className="btn btn-primary p-2"
+                          className={`btn btn-primary ${isMobile ? 'px-4 py-3' : 'p-2'}`}
                         >
-                          <Send size={14} />
+                          <Send size={isMobile ? 16 : 14} />
                         </button>
                       </div>
                       <button
                         onClick={resetChat}
-                        className="mt-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                        className={`mt-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 ${
+                          isMobile ? 'text-sm' : 'text-xs'
+                        }`}
                       >
                         Start new session
                       </button>

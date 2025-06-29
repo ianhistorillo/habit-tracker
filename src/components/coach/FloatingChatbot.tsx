@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Brain, MessageCircle, Send, X, Minimize2, Maximize2, Target, Clock, AlertCircle, Loader, Wifi, WifiOff } from 'lucide-react';
+import { Brain, MessageCircle, Send, X, Minimize2, Maximize2, Target, Clock, AlertCircle, Loader, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useHabitStore } from '../../stores/habitStore';
 import { useProfileStore } from '../../stores/profileStore';
@@ -55,6 +55,17 @@ const FloatingChatbot = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Listen for external open chat events
+  useEffect(() => {
+    const handleOpenChat = () => {
+      setIsOpen(true);
+      setShowHint(false);
+    };
+
+    window.addEventListener('openFloatingChat', handleOpenChat);
+    return () => window.removeEventListener('openFloatingChat', handleOpenChat);
+  }, []);
+
   // Prevent body scroll when mobile chat is open
   useEffect(() => {
     if (isMobile && isOpen && !isMinimized) {
@@ -67,7 +78,8 @@ const FloatingChatbot = () => {
       document.body.style.overflow = 'unset';
     };
   }, [isMobile, isOpen, isMinimized]);
-  // Animated hints for the floating button
+
+  // Animated hints for the floating button (optimized)
   const hints = [
     "💡 Need habit advice?",
     "🎯 Struggling with consistency?", 
@@ -78,6 +90,7 @@ const FloatingChatbot = () => {
     "🚀 Get unstuck today!"
   ];
 
+  // Memoized hint function to prevent unnecessary re-renders
   const showRandomHint = useCallback(() => {
     if (!isOpen) {
       const randomHint = hints[Math.floor(Math.random() * hints.length)];
@@ -88,13 +101,21 @@ const FloatingChatbot = () => {
         setShowHint(false);
       }, 3000);
     }
-  }, [isOpen, hints]);
+  }, [isOpen]); // Remove hints dependency to prevent recreation
 
-  // Show hints periodically
+  // Show hints periodically (optimized timing)
   useEffect(() => {
-    const interval = setInterval(showRandomHint, 8000 + Math.random() * 7000); // 8-15 seconds
-    return () => clearInterval(interval);
-  }, [showRandomHint]);
+    // Only start hint timer if not open and after initial delay
+    if (!isOpen) {
+      const initialDelay = setTimeout(() => {
+        showRandomHint();
+        const interval = setInterval(showRandomHint, 12000 + Math.random() * 8000); // 12-20 seconds
+        return () => clearInterval(interval);
+      }, 5000); // Wait 5 seconds before first hint
+      
+      return () => clearTimeout(initialDelay);
+    }
+  }, [isOpen, showRandomHint]);
 
   // Initialize form with user's current habits
   useEffect(() => {
@@ -108,7 +129,9 @@ const FloatingChatbot = () => {
 
   // Auto-scroll to bottom of messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   // Fallback coaching responses for offline mode
@@ -500,30 +523,10 @@ const FloatingChatbot = () => {
               className={`relative flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transition-all hover:shadow-xl ${
                 isMobile ? 'h-14 w-14' : 'h-16 w-16'
               }`}
-              whileHover={{ 
-                scale: 1.1,
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-              }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              animate={{
-                y: [0, -8, 0],
-              }}
-              transition={{
-                y: {
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }
-              }}
             >
               <Brain size={isMobile ? 24 : 28} />
-              
-              {/* Pulsing ring animation */}
-              <motion.div
-                className="absolute inset-0 rounded-full border-2 border-purple-300"
-                animate={{ scale: [1, 1.3, 1], opacity: [0.7, 0, 0.7] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
             </motion.button>
           </motion.div>
         )}
@@ -533,14 +536,15 @@ const FloatingChatbot = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
             animate={{ 
               opacity: 1, 
               scale: 1, 
               y: 0,
               height: isMinimized ? 'auto' : getChatHeight()
             }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className="bg-white shadow-2xl dark:bg-gray-800 overflow-hidden"
             style={getContainerStyles()}
           >

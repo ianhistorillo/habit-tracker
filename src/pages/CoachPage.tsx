@@ -77,14 +77,9 @@ const CoachPage = () => {
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <button
                 onClick={() => {
-                  // Scroll to bottom right to highlight the floating chatbot
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                  // Add a subtle animation hint
-                  const chatbot = document.querySelector('[data-chatbot]');
-                  if (chatbot) {
-                    chatbot.classList.add('animate-pulse');
-                    setTimeout(() => chatbot.classList.remove('animate-pulse'), 2000);
-                  }
+                  // Trigger the floating chatbot to open
+                  const event = new CustomEvent('openFloatingChat');
+                  window.dispatchEvent(event);
                 }}
                 className="btn bg-white text-purple-600 hover:bg-gray-100"
               >
@@ -269,13 +264,9 @@ const CoachPage = () => {
 
               <button
                 onClick={() => {
-                  // Same scroll and highlight effect
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                  const chatbot = document.querySelector('[data-chatbot]');
-                  if (chatbot) {
-                    chatbot.classList.add('animate-pulse');
-                    setTimeout(() => chatbot.classList.remove('animate-pulse'), 2000);
-                  }
+                  // Trigger the floating chatbot to open
+                  const event = new CustomEvent('openFloatingChat');
+                  window.dispatchEvent(event);
                 }}
                 className="btn btn-primary w-full"
               >
@@ -295,7 +286,7 @@ const CoachPage = () => {
                 Create some habits first to get personalized coaching advice
               </p>
               <button
-                onClick={() => window.location.href = '/app/habits'}
+                onClick={() => navigate("/app/habits")}
                 className="btn btn-secondary"
               >
                 Create Your First Habit

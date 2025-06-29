@@ -250,7 +250,7 @@ const Dashboard = () => {
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <button
-                  onClick={() => navigate("/habits")}
+                  onClick={() => navigate("/app/habits")}
                   className="btn btn-primary"
                 >
                   <Plus size={16} className="mr-2" />
@@ -258,7 +258,7 @@ const Dashboard = () => {
                 </button>
                 {profile?.surveyCompleted && (
                   <button
-                    onClick={() => navigate("/habits")}
+                    onClick={() => navigate("/app/habits")}
                     className="btn btn-secondary"
                   >
                     <Brain size={16} className="mr-2" />
@@ -291,7 +291,7 @@ const Dashboard = () => {
               <motion.div
                 key={habit.id}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                onClick={() => navigate("/app/habits")}
                 transition={{ delay: 0.1 }}
               >
                 <HabitCard habit={habit} />

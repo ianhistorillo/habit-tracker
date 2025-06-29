@@ -156,7 +156,7 @@ const Dashboard = () => {
               </>
             )}
             <button
-              onClick={() => navigate("/habits")}
+              onClick={() => navigate("/app/habits")}
               className="mt-4 flex items-center rounded-lg bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/30"
             >
               <Plus size={16} className="mr-2" />
@@ -250,7 +250,7 @@ const Dashboard = () => {
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <button
-                  onClick={() => navigate("/app/habits")}
+                  onClick={() => navigate("/habits")}
                   className="btn btn-primary"
                 >
                   <Plus size={16} className="mr-2" />
@@ -258,7 +258,7 @@ const Dashboard = () => {
                 </button>
                 {profile?.surveyCompleted && (
                   <button
-                    onClick={() => navigate("/app/habits")}
+                    onClick={() => navigate("/habits")}
                     className="btn btn-secondary"
                   >
                     <Brain size={16} className="mr-2" />
@@ -291,7 +291,7 @@ const Dashboard = () => {
               <motion.div
                 key={habit.id}
                 initial={{ opacity: 0, y: 20 }}
-                onClick={() => navigate("/app/habits")}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
                 <HabitCard habit={habit} />

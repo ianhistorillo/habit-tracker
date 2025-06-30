@@ -1,22 +1,11 @@
-import { useState } from "react";
-import {
-  User,
-  Calendar,
-  Briefcase,
-  Users,
-  Heart,
-  DollarSign,
-  Smartphone,
-  Globe,
-  Leaf,
-  X,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import Modal from "../ui/Modal";
-import { SurveyData, LifestyleFocus } from "../../types";
-import { useProfileStore } from "../../stores/profileStore";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { User, Calendar, Briefcase, Users, Heart, DollarSign, Smartphone, Globe, Leaf, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Modal from '../ui/Modal';
+import { SurveyData, LifestyleFocus } from '../../types';
+import { useProfileStore } from '../../stores/profileStore';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface UserSurveyModalProps {
   isOpen: boolean;
@@ -28,10 +17,10 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [surveyData, setSurveyData] = useState<SurveyData>({
-    displayName: "",
+    displayName: '',
     age: 25,
-    gender: "prefer-not-to-say",
-    occupationCategory: "professional",
+    gender: 'prefer-not-to-say',
+    occupationCategory: 'professional',
     heightCm: undefined,
     weightKg: undefined,
     lifestyleFocus: [],
@@ -39,59 +28,54 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
 
   const totalSteps = 6;
 
-  const lifestyleOptions: {
-    value: LifestyleFocus;
-    label: string;
-    icon: any;
-    description: string;
-  }[] = [
+  const lifestyleOptions: { value: LifestyleFocus; label: string; icon: any; description: string }[] = [
     {
-      value: "health-wellness",
-      label: "Health & Wellness",
+      value: 'health-wellness',
+      label: 'Health & Wellness',
       icon: Heart,
-      description: "Physical fitness, nutrition, mental health",
+      description: 'Physical fitness, nutrition, mental health'
     },
     {
-      value: "work-career",
-      label: "Work & Career",
+      value: 'work-career',
+      label: 'Work & Career',
       icon: Briefcase,
-      description: "Professional growth, productivity, skills",
+      description: 'Professional growth, productivity, skills'
     },
     {
-      value: "family-relationship",
-      label: "Family & Relationships",
+      value: 'family-relationship',
+      label: 'Family & Relationships',
       icon: Users,
-      description: "Quality time, communication, connections",
+      description: 'Quality time, communication, connections'
     },
     {
-      value: "financial",
-      label: "Financial",
+      value: 'financial',
+      label: 'Financial',
       icon: DollarSign,
-      description: "Budgeting, saving, investing, financial goals",
+      description: 'Budgeting, saving, investing, financial goals'
     },
     {
-      value: "social-leisure",
-      label: "Social & Leisure",
+      value: 'social-leisure',
+      label: 'Social & Leisure',
       icon: Users,
-      description: "Hobbies, entertainment, social activities",
+      description: 'Hobbies, entertainment, social activities'
     },
     {
-      value: "technological",
-      label: "Technological",
+      value: 'technological',
+      label: 'Technological',
       icon: Smartphone,
-      description: "Digital skills, tech habits, online presence",
+      description: 'Digital skills, tech habits, online presence'
     },
     {
-      value: "cultural-spiritual",
-      label: "Cultural & Spiritual",
+      value: 'cultural-spiritual',
+      label: 'Cultural & Spiritual',
       icon: Globe,
-      description: "Personal growth, mindfulness, values",
+      description: 'Personal growth, mindfulness, values'
     },
     {
-      value: "environment-ethical",
-      label: "Environment & Ethical",
+      value: 'environment-ethical',
+      label: 'Environment & Ethical',
       icon: Leaf,
-      description: "Sustainability, ethical living, social impact",
+      description: 'Sustainability, ethical living, social impact'
     },
   ];
 
@@ -114,40 +98,38 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
 
   const handleSubmit = async () => {
     if (!surveyData.displayName.trim()) {
-      toast.error("Please enter your name");
+      toast.error('Please enter your name');
       return;
     }
 
     if (surveyData.lifestyleFocus.length === 0) {
-      toast.error("Please select at least one lifestyle focus");
+      toast.error('Please select at least one lifestyle focus');
       return;
     }
 
     try {
       await completeSurvey(surveyData);
       onClose(true); // Mark as completed
-
+      
       // Navigate to habits page and show AI suggestions
-      navigate("/app/habits");
-
+      navigate('/app/habits');
+      
       // Small delay to ensure navigation completes, then show success message
       setTimeout(() => {
-        toast.success(
-          "Profile completed! Check out your personalized AI suggestions! 🎉"
-        );
+        toast.success('Profile completed! Check out your personalized AI suggestions! 🎉');
       }, 500);
     } catch (error) {
-      console.error("Error completing survey:", error);
-      toast.error("Failed to complete survey");
+      console.error('Error completing survey:', error);
+      toast.error('Failed to complete survey');
     }
   };
 
   const toggleLifestyleFocus = (focus: LifestyleFocus) => {
-    setSurveyData((prev) => ({
+    setSurveyData(prev => ({
       ...prev,
       lifestyleFocus: prev.lifestyleFocus.includes(focus)
-        ? prev.lifestyleFocus.filter((f) => f !== focus)
-        : [...prev.lifestyleFocus, focus],
+        ? prev.lifestyleFocus.filter(f => f !== focus)
+        : [...prev.lifestyleFocus, focus]
     }));
   };
 
@@ -172,12 +154,7 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                 type="text"
                 placeholder="Enter your preferred name"
                 value={surveyData.displayName}
-                onChange={(e) =>
-                  setSurveyData((prev) => ({
-                    ...prev,
-                    displayName: e.target.value,
-                  }))
-                }
+                onChange={(e) => setSurveyData(prev => ({ ...prev, displayName: e.target.value }))}
                 className="input w-full max-w-sm text-center text-lg"
                 autoFocus
               />
@@ -205,12 +182,7 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                 min="13"
                 max="100"
                 value={surveyData.age}
-                onChange={(e) =>
-                  setSurveyData((prev) => ({
-                    ...prev,
-                    age: parseInt(e.target.value),
-                  }))
-                }
+                onChange={(e) => setSurveyData(prev => ({ ...prev, age: parseInt(e.target.value) }))}
                 className="flex-1"
               />
               <span className="text-2xl font-bold text-primary-600 dark:text-primary-400 min-w-[3rem]">
@@ -236,24 +208,19 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
             </div>
             <div className="grid gap-3 sm:grid-cols-2 max-w-md mx-auto">
               {[
-                { value: "male", label: "Male" },
-                { value: "female", label: "Female" },
-                { value: "non-binary", label: "Non-binary" },
-                { value: "prefer-not-to-say", label: "Prefer not to say" },
+                { value: 'male', label: 'Male' },
+                { value: 'female', label: 'Female' },
+                { value: 'non-binary', label: 'Non-binary' },
+                { value: 'prefer-not-to-say', label: 'Prefer not to say' },
               ].map((option) => (
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() =>
-                    setSurveyData((prev) => ({
-                      ...prev,
-                      gender: option.value as any,
-                    }))
-                  }
+                  onClick={() => setSurveyData(prev => ({ ...prev, gender: option.value as any }))}
                   className={`p-3 rounded-lg border transition-all ${
                     surveyData.gender === option.value
-                      ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-                      : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
+                      ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                      : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
                   }`}
                 >
                   {option.label}
@@ -279,26 +246,21 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
             </div>
             <div className="grid gap-3 sm:grid-cols-2 max-w-md mx-auto">
               {[
-                { value: "student", label: "Student" },
-                { value: "professional", label: "Professional" },
-                { value: "self-employed", label: "Self-employed" },
-                { value: "retired", label: "Retired" },
-                { value: "unemployed", label: "Unemployed" },
-                { value: "other", label: "Other" },
+                { value: 'student', label: 'Student' },
+                { value: 'professional', label: 'Professional' },
+                { value: 'self-employed', label: 'Self-employed' },
+                { value: 'retired', label: 'Retired' },
+                { value: 'unemployed', label: 'Unemployed' },
+                { value: 'other', label: 'Other' },
               ].map((option) => (
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() =>
-                    setSurveyData((prev) => ({
-                      ...prev,
-                      occupationCategory: option.value as any,
-                    }))
-                  }
+                  onClick={() => setSurveyData(prev => ({ ...prev, occupationCategory: option.value as any }))}
                   className={`p-3 rounded-lg border transition-all ${
                     surveyData.occupationCategory === option.value
-                      ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-                      : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
+                      ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                      : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
                   }`}
                 >
                   {option.label}
@@ -330,15 +292,11 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                 <input
                   type="number"
                   placeholder="170"
-                  value={surveyData.heightCm || ""}
-                  onChange={(e) =>
-                    setSurveyData((prev) => ({
-                      ...prev,
-                      heightCm: e.target.value
-                        ? parseInt(e.target.value)
-                        : undefined,
-                    }))
-                  }
+                  value={surveyData.heightCm || ''}
+                  onChange={(e) => setSurveyData(prev => ({ 
+                    ...prev, 
+                    heightCm: e.target.value ? parseInt(e.target.value) : undefined 
+                  }))}
                   className="input w-full text-center"
                 />
               </div>
@@ -349,15 +307,11 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                 <input
                   type="number"
                   placeholder="70"
-                  value={surveyData.weightKg || ""}
-                  onChange={(e) =>
-                    setSurveyData((prev) => ({
-                      ...prev,
-                      weightKg: e.target.value
-                        ? parseInt(e.target.value)
-                        : undefined,
-                    }))
-                  }
+                  value={surveyData.weightKg || ''}
+                  onChange={(e) => setSurveyData(prev => ({ 
+                    ...prev, 
+                    weightKg: e.target.value ? parseInt(e.target.value) : undefined 
+                  }))}
                   className="input w-full text-center"
                 />
               </div>
@@ -379,17 +333,14 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                 What lifestyle areas do you want to focus on?
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Select all that apply - this helps us suggest the most relevant
-                habits
+                Select all that apply - this helps us suggest the most relevant habits
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 max-w-2xl mx-auto">
               {lifestyleOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isSelected = surveyData.lifestyleFocus.includes(
-                  option.value
-                );
-
+                const isSelected = surveyData.lifestyleFocus.includes(option.value);
+                
                 return (
                   <button
                     key={option.value}
@@ -397,17 +348,12 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                     onClick={() => toggleLifestyleFocus(option.value)}
                     className={`p-4 rounded-lg border transition-all text-left ${
                       isSelected
-                        ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-                        : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
+                        ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                        : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
                     }`}
                   >
                     <div className="flex items-start space-x-3">
-                      <IconComponent
-                        size={20}
-                        className={
-                          isSelected ? "text-primary-600" : "text-gray-500"
-                        }
-                      />
+                      <IconComponent size={20} className={isSelected ? 'text-primary-600' : 'text-gray-500'} />
                       <div>
                         <h4 className="font-medium">{option.label}</h4>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -420,8 +366,7 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
               })}
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Selected: {surveyData.lifestyleFocus.length} area
-              {surveyData.lifestyleFocus.length !== 1 ? "s" : ""}
+              Selected: {surveyData.lifestyleFocus.length} area{surveyData.lifestyleFocus.length !== 1 ? 's' : ''}
             </p>
           </div>
         );
@@ -469,9 +414,7 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
               {/* Progress Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                  <span>
-                    Step {currentStep} of {totalSteps}
-                  </span>
+                  <span>Step {currentStep} of {totalSteps}</span>
                   <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700">
@@ -507,24 +450,22 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                   >
                     Previous
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleSkip}
-                    className="btn btn-secondary"
-                  >
-                    Skip for now
-                  </button>
+                  {currentStep === totalSteps && (
+                    <button
+                      type="button"
+                      onClick={handleSkip}
+                      className="btn btn-secondary"
+                    >
+                      Skip for now
+                    </button>
+                  )}
                 </div>
 
                 {currentStep === totalSteps ? (
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={
-                      loading ||
-                      !surveyData.displayName.trim() ||
-                      surveyData.lifestyleFocus.length === 0
-                    }
+                    disabled={loading || !surveyData.displayName.trim() || surveyData.lifestyleFocus.length === 0}
                     className="btn btn-primary"
                   >
                     {loading ? (
@@ -533,17 +474,26 @@ const UserSurveyModal = ({ isOpen, onClose }: UserSurveyModalProps) => {
                         Completing...
                       </div>
                     ) : (
-                      "Complete & Get AI Suggestions"
+                      'Complete & Get AI Suggestions'
                     )}
                   </button>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className="btn btn-primary"
-                  >
-                    Next
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      type="button"
+                      onClick={handleSkip}
+                      className="btn btn-secondary"
+                    >
+                      Skip for now
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className="btn btn-primary"
+                    >
+                      Next
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

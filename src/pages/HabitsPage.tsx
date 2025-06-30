@@ -30,6 +30,16 @@ const HabitsPage = () => {
   const activeHabits = getActiveHabits();
   const archivedHabits = getArchivedHabits();
 
+  // Listen for profile modal trigger from header
+  useEffect(() => {
+    const handleShowProfileModal = () => {
+      setShowSurveyModal(true);
+    };
+
+    window.addEventListener('showProfileModal', handleShowProfileModal);
+    return () => window.removeEventListener('showProfileModal', handleShowProfileModal);
+  }, []);
+
   const filteredHabits = (filterActive ? activeHabits : archivedHabits).filter(
     (habit) =>
       habit.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

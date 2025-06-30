@@ -80,6 +80,11 @@
   opacity: 0;
   transform: translateX(20px);
   transition: opacity 300ms, transform 300ms;
+
+  /* Button outline style for guide */
+  .btn-outline {
+    @apply bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100;
+  }
 }
 
 /* PWA specific styles */

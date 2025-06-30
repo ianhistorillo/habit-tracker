@@ -15,16 +15,23 @@ import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import UserSurveyModal from './components/profile/UserSurveyModal';
+import GuideAssistant from './components/guide/GuideAssistant';
 
 import { useThemeStore } from './stores/themeStore';
 import { useAuthStore } from './stores/authStore';
 import { useProfileStore } from './stores/profileStore';
+import { useGuideStore } from './stores/guideStore';
 
 function App() {
   const { theme, setTheme } = useThemeStore();
   const { user, loading: authLoading } = useAuthStore();
   const { profile, loading: profileLoading } = useProfileStore();
+  const { shouldShowGuide, hasSeenGuide, setShouldShowGuide, completeGuide, skipGuide } = useGuideStore();
   const [showSurvey, setShowSurvey] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
+
+  // Track if survey has been handled (completed or dismissed) to show guide next
+  const [surveyHandled, setSurveyHandled] = useState(false);
 
   useEffect(() => {
     // Check if user prefers dark mode
@@ -49,40 +56,90 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Check if user needs to complete survey - Show IMMEDIATELY if not completed
+  // Handle survey and guide display logic
   useEffect(() => {
-    console.log('Survey check:', {
+    console.log('Survey and Guide check:', {
       user: !!user,
       authLoading,
       profileLoading,
       profile: !!profile,
-      surveyCompleted: profile?.surveyCompleted
+      surveyCompleted: profile?.surveyCompleted,
+      hasSeenGuide,
+      shouldShowGuide,
+      surveyHandled
     });
 
-    // Only show survey if:
-    // 1. User is authenticated
-    // 2. Auth is not loading
-    // 3. Profile is not loading
-    // 4. Profile exists and survey is not completed
-    if (user && !authLoading && !profileLoading && profile && !profile.surveyCompleted) {
-      console.log('Showing survey modal');
-      setShowSurvey(true);
-    } else {
-      console.log('Not showing survey modal');
-      setShowSurvey(false);
+    if (user && !authLoading && !profileLoading && profile) {
+      // Priority 1: Show survey if not completed
+      if (!profile.surveyCompleted && !surveyHandled) {
+        console.log('Showing survey modal');
+        setShowSurvey(true);
+        setShowGuide(false);
+      } 
+      // Priority 2: Show guide if survey has been handled (completed or dismissed) but guide hasn't been seen
+      else if ((profile.surveyCompleted || surveyHandled) && !hasSeenGuide && !shouldShowGuide) {
+        console.log('Showing guide modal');
+        setShowSurvey(false);
+        setShowGuide(true);
+        setShouldShowGuide(true);
+      }
+      // Priority 3: Show guide if explicitly requested
+      else if (shouldShowGuide) {
+        console.log('Showing requested guide modal');
+        setShowSurvey(false);
+        setShowGuide(true);
+      }
+      else {
+        console.log('Not showing any modals');
+        setShowSurvey(false);
+        if (!surveyHandled) {
+          setShowGuide(false);
+        }
+      }
     }
-  }, [user, profile, authLoading, profileLoading]);
+  }, [user, profile, authLoading, profileLoading, hasSeenGuide, shouldShowGuide, setShouldShowGuide, surveyHandled]);
 
   const handleSurveyClose = (completed: boolean = false) => {
     console.log('Survey closed, completed:', completed);
     setShowSurvey(false);
+    setSurveyHandled(true);
     
-    // If user just skipped (not completed), don't show success message
-    if (!completed) {
-      // Survey was skipped - modal just closes
-      return;
+    // Show guide after survey is handled (whether completed or skipped)
+    setTimeout(() => {
+      setShowGuide(true);
+      setShouldShowGuide(true);
+    }, 1000); // Small delay for smooth transition
+  };
+
+  const handleGuideClose = (completed: boolean = false) => {
+    console.log('Guide closed, completed:', completed);
+    setShowGuide(false);
+    setShouldShowGuide(false);
+    
+    if (completed) {
+      completeGuide();
+    } else {
+      skipGuide();
     }
   };
+
+  // Handle guide button click from header
+  useEffect(() => {
+    const handleShowGuide = () => {
+      setShowGuide(true);
+      setShouldShowGuide(true);
+    };
+
+    // When guide is explicitly requested, show it regardless of survey status
+    if (shouldShowGuide && !showSurvey) {
+      setShowGuide(true);
+    }
+
+    // Listen for guide requests from header
+    if (shouldShowGuide && !showSurvey) {
+      setShowGuide(true);
+    }
+  }, [shouldShowGuide, showSurvey]);
 
   return (
     <>
@@ -116,6 +173,12 @@ function App() {
       <UserSurveyModal 
         isOpen={showSurvey} 
         onClose={handleSurveyClose} 
+      />
+
+      {/* Guide Assistant Modal */}
+      <GuideAssistant 
+        isOpen={showGuide} 
+        onClose={handleGuideClose} 
       />
     </>
   );

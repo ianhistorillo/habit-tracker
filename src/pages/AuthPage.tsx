@@ -22,11 +22,6 @@ const AuthPage = () => {
   // Check if this is a password recovery flow
   const isRecovery = searchParams.get('type') === 'recovery';
 
-  // If it's a recovery flow, show the reset password form
-  if (isRecovery) {
-    return <ResetPasswordForm />;
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -47,6 +42,11 @@ const AuthPage = () => {
       setLoading(false);
     }
   };
+
+  // If it's a recovery flow, show the reset password form
+  if (isRecovery) {
+    return <ResetPasswordForm />;
+  }
 
   return (
     <>

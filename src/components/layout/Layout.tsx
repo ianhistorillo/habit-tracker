@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import FloatingChatbot from '../coach/FloatingChatbot';
+import GuideFloatingButton from '../guide/GuideFloatingButton';
 import { useState, useEffect } from 'react';
 
 const Layout = () => {
@@ -51,6 +52,9 @@ const Layout = () => {
         
         {/* Floating AI Coach Chatbot */}
         <FloatingChatbot />
+        
+        {/* Floating Guide Button */}
+        <GuideFloatingButton />
       </div>
     </div>
   );

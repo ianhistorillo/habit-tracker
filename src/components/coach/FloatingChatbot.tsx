@@ -470,7 +470,7 @@ const FloatingChatbot = () => {
     if (isMobile && isOpen && !isMinimized) {
       return 'calc(100vh - 4rem)'; // Full height minus header
     }
-    return '24rem'; // 384px
+    return '32rem'; // 384px
   };
   return (
     <>

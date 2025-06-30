@@ -163,52 +163,6 @@ const SettingsPage = () => {
         </div>
 
         <div className="space-y-4">
-          <div>
-            <h4 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Export Data
-            </h4>
-            <button
-              type="button"
-              className="btn btn-secondary w-full"
-              onClick={() => {
-                const data = {
-                  habits: useHabitStore.getState().habits,
-                  logs: useHabitStore.getState().logs,
-                  streaks: useHabitStore.getState().streaks,
-                };
-
-                const blob = new Blob([JSON.stringify(data, null, 2)], {
-                  type: "application/json",
-                });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `habit-tracker-export-${
-                  new Date().toISOString().split("T")[0]
-                }.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-
-                toast.success("Data exported successfully");
-              }}
-            >
-              Export Data (.json)
-            </button>
-          </div>
-
-          <div>
-            <h4 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Clear All Data
-            </h4>
-            <button
-              type="button"
-              className="btn w-full bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
-              onClick={() => setShowConfirmation(true)}
-            >
-              <Trash size={16} className="mr-2" />
-              Clear All Data
-            </button>
-          </div>
 
           <div>
             <h4 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">

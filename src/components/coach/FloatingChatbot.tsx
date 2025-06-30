@@ -541,7 +541,9 @@ const FloatingChatbot = () => {
               opacity: 1, 
               scale: 1, 
               y: 0,
-              height: isMinimized ? 'auto' : getChatHeight()
+              height: isMinimized ? 'auto' : getChatHeight(),
+              maxHeight: '39rem',
+              overflowY: 'auto',
             }}
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}

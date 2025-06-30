@@ -74,30 +74,27 @@ const LandingPage = () => {
   ];
 
   const stats = [
-    { number: "10K+", label: "Active Users" },
-    { number: "1M+", label: "Habits Tracked" },
-    { number: "95%", label: "Success Rate" },
-    { number: "4.9★", label: "User Rating" },
+    { number: "Limited Offer", label: "Free access to all features" },
+    { number: "Guide Assistant", label: "Will help you get started" },
+    { number: "AI Powered", label: "Have struggles? Ask our AI Coach" },
+    { number: "24/7", label: "Available Support" }, 
   ];
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      role: "Product Manager",
-      content: "Trackbit transformed my daily routine. The AI suggestions are incredibly accurate and helpful!",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=64&h=64&fit=crop&crop=face"
+      name: "From Medium User",
+      role: "Writer",
+      content: "Switching to an app meant I averaged a 49% completion rate… The app I use makes a happy chiming noise… I love those little gold stars.",
     },
     {
-      name: "Michael Chen",
-      role: "Software Engineer",
-      content: "The analytics and streak tracking keep me motivated. Best habit tracker I've ever used.",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&h=64&fit=crop&crop=face"
+      name: "From Reddit r/productivity",
+      role: "Reddit User",
+      content: "One user shared tracking 15 daily habits using Notion, including reading, yoga, guitar practice, and more—discovering that “it is really hard to do things daily if they are not part of your identity.",
     },
     {
-      name: "Emily Rodriguez",
-      role: "Fitness Coach",
-      content: "I recommend Trackbit to all my clients. The routine builder is a game-changer!",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face"
+      name: "From Life Planner Blog",
+      role: "Blog Post",
+      content: "Sarah (busy mom): habit tracking gave her “accountability and visual reminders,” helping her stick to workouts and build a sustainable routine ",
     },
   ];
 
@@ -467,7 +464,7 @@ const LandingPage = () => {
           >
             <div className="text-center mb-12">
               <h3 className="text-2xl font-bold text-gray-900">
-                What Our Users Say
+                What People Says About Tracking Habits
               </h3>
             </div>
             
@@ -488,11 +485,6 @@ const LandingPage = () => {
                 </div>
                 <p className="text-gray-600 mb-6 italic">"{testimonial.content}"</p>
                 <div className="flex items-center">
-                  <img
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
-                    className="h-12 w-12 rounded-full object-cover"
-                  />
                   <div className="ml-4">
                     <div className="font-semibold text-gray-900">{testimonial.name}</div>
                     <div className="text-sm text-gray-500">{testimonial.role}</div>

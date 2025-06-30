@@ -246,33 +246,33 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ 
             opacity: 1, 
-            scale: isMinimized ? 0.3 : 1, 
-            y: isMinimized ? 300 : 0,
-            x: isMinimized ? 400 : 0
+            scale: isMinimized ? 0.3 : 1,
+            y: isMinimized ? (window.innerWidth < 768 ? 200 : 300) : 0,
+            x: isMinimized ? (window.innerWidth < 768 ? 200 : 400) : 0
           }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3 }}
-          className={`w-full max-w-2xl rounded-2xl bg-white shadow-2xl dark:bg-gray-800 ${
+          className={`w-full max-w-2xl rounded-2xl bg-white shadow-2xl dark:bg-gray-800 overflow-hidden ${
             isMinimized ? 'pointer-events-none' : ''
           }`}
         >
           {/* Header */}
-          <div className={`flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700 bg-gradient-to-r ${getCategoryColor(currentStepData.category)} text-white rounded-t-2xl`}>
+          <div className={`flex items-center justify-between border-b border-gray-200 p-4 md:p-6 dark:border-gray-700 bg-gradient-to-r ${getCategoryColor(currentStepData.category)} text-white rounded-t-2xl`}>
             <div className="flex items-center space-x-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+              <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
                 {currentStepData.icon}
               </div>
-              <div>
-                <h2 className="text-xl font-semibold">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg md:text-xl font-semibold truncate">
                   Getting Started Guide
                 </h2>
-                <p className="text-sm text-white/80">
+                <p className="text-xs md:text-sm text-white/80">
                   Step {currentStep + 1} of {guideSteps.length}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              {!isMinimized && (
+              {/* {!isMinimized && (
                 <button
                   onClick={() => setIsMinimized(true)}
                   className="rounded-md p-2 text-white/80 hover:bg-white/20 hover:text-white"
@@ -280,7 +280,7 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
                 >
                   <Settings size={18} />
                 </button>
-              )}
+              )} */}
               <button
                 onClick={handleSkip}
                 className="rounded-md p-2 text-white/80 hover:bg-white/20 hover:text-white"
@@ -294,7 +294,7 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
           {!isMinimized && (
             <>
               {/* Progress Bar */} 
-              <div className="px-6 pt-4">
+              <div className="px-4 md:px-6 pt-3 md:pt-4">
                 <div className="mb-2 flex justify-between text-sm text-gray-600 dark:text-gray-400">
                   <span>Progress</span>
                   <span>{Math.round(progress)}%</span>
@@ -310,33 +310,33 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+              <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-h-[50vh] md:max-h-[60vh] overflow-y-auto">
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3">
                     {currentStepData.title}
                   </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
                     {currentStepData.description}
                   </p>
                 </div>
 
                 {/* Tips Section */}
-                <div className="rounded-xl bg-gray-50 p-5 dark:bg-gray-700/50">
+                <div className="rounded-xl bg-gray-50 p-3 md:p-5 dark:bg-gray-700/50">
                   <div className="flex items-center mb-3">
                     <Lightbulb className="h-5 w-5 text-yellow-500 mr-2" />
-                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                    <h4 className="font-semibold text-gray-900 dark:text-white text-sm md:text-base">
                       {currentStepData.id === 'welcome' ? 'What to Expect' : 
                        currentStepData.id === 'complete' ? 'Remember' : 'Pro Tips'}
                     </h4>
                   </div>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1 md:space-y-2">
                     {currentStepData.tips.map((tip, index) => (
                       <motion.li
                         key={index}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-start text-sm text-gray-700 dark:text-gray-300"
+                        className="flex items-start text-xs md:text-sm text-gray-700 dark:text-gray-300"
                       >
                         <div className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 mr-3 flex-shrink-0" />
                         {tip}
@@ -348,14 +348,14 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
                 {/* Action Button for Navigation */}
                 {currentStepData.route && currentStepData.id !== 'welcome' && currentStepData.id !== 'complete' && (
                   <div className="text-center">
-                    <button 
+                    <button
                       onClick={() => handleExplore(currentStepData.id, currentStepData.route)}
-                      className={`btn bg-gradient-to-r ${getCategoryColor(currentStepData.category)} text-white hover:shadow-lg transition-all`}
+                      className={`btn bg-gradient-to-r ${getCategoryColor(currentStepData.category)} text-white hover:shadow-lg transition-all text-sm md:text-base py-2 md:py-3`}
                     >
                       <Play size={16} className="mr-2" />
                       Explore {currentStepData.title.split(' ')[0]}
                     </button>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2"> 
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       This will minimize the guide and take you to the page
                     </p>
                   </div>
@@ -363,21 +363,29 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
               </div>
 
               {/* Navigation */}
-              <div className="flex items-center justify-between border-t border-gray-200 p-6 dark:border-gray-700">
+              <div className="flex flex-col md:flex-row md:items-center justify-between border-t border-gray-200 p-4 md:p-6 dark:border-gray-700">
+                {/* Mobile step indicator - only visible on small screens */}
+                <div className="flex justify-center mb-3 md:hidden">
+                  <span className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                    {currentStep + 1} / {guideSteps.length}
+                  </span>
+                </div>
+                
+                {/* Navigation buttons */}
+                <div className="flex justify-between w-full">
                 <button
                   onClick={handlePrevious} 
                   disabled={isFirstStep}
-                  className="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn btn-secondary btn-xs md:btn-sm disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1 md:px-4 md:py-2"
                 >
                   <ChevronLeft size={16} className="mr-1" />
                   Previous
                 </button>
 
-                <div className="flex items-center space-x-2">
+                <div className="hidden md:flex space-x-1 md:space-x-2">
                   {guideSteps.map((_, index) => (
                     <button
                       key={index}
-                      onClick={() => setCurrentStep(index)}
                       className={`h-2 w-8 rounded-full transition-all ${
                         index === currentStep
                           ? `bg-gradient-to-r ${getCategoryColor(currentStepData.category)}`
@@ -391,7 +399,7 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
 
                 <button
                   onClick={handleNext}
-                  className={`btn ${isLastStep ? 'btn-success' : 'btn-primary'}`}
+                  className={`btn ${isLastStep ? 'btn-success' : 'btn-primary'} btn-xs md:btn-sm px-3 py-1 md:px-4 md:py-2`}
                 >
                   {isLastStep ? (
                     <>
@@ -405,19 +413,20 @@ const GuideAssistant = ({ isOpen, onClose }: GuideAssistantProps) => {
                     </>
                   )}
                 </button>
+                </div>
               </div>
             </>
           )}
 
           {/* Minimized State */}
           {isMinimized && (
-            <div className="p-4"> 
+            <div className="p-3 md:p-4"> 
               <button
                 onClick={() => setIsMinimized(false)}
                 className="flex items-center space-x-2 text-white hover:text-white/80"
               >
                 <HelpCircle size={16} />
-                <span className="text-sm">Continue Guide</span>
+                <span className="text-xs md:text-sm">Continue Guide</span>
               </button>
             </div>
           )}

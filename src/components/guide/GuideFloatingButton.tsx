@@ -25,7 +25,7 @@ const GuideFloatingButton = () => {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0, opacity: 0 }}
-          className="fixed bottom-20 left-4 z-40 md:bottom-6 md:left-6"
+          className="fixed bottom-4 left-4 z-40 md:bottom-6 md:left-6"
         >
           <motion.button
             onClick={() => setShowGuide(true)}
@@ -44,9 +44,9 @@ const GuideFloatingButton = () => {
               animate={{ opacity: 1, x: 0 }}
               className="absolute left-16 top-1/2 -translate-y-1/2 hidden md:block"
             >
-              <div className="rounded-lg bg-gray-900 px-3 py-2 text-sm text-white shadow-lg">
+              <div className="rounded-lg bg-gray-900 px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm text-white shadow-lg">
                 <div className="flex items-center space-x-2">
-                  <BookOpen size={14} />
+                  <BookOpen size={12} className="md:h-4 md:w-4" />
                   <span>Getting Started Guide</span>
                 </div>
                 <div className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 h-2 w-2 rotate-45 bg-gray-900"></div>

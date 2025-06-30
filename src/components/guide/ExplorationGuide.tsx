@@ -364,26 +364,27 @@ const ExplorationGuide = ({ stepId, onReturn, onClose }: ExplorationGuideProps) 
       <motion.div 
         ref={guideModalRef}
         initial={{ opacity: 0, y: 10, x: 0 }}
-        animate={{ 
+        animate={{
           opacity: 1, 
           y: 0,
-          x: stepId === 'coach' ? (windowSize.width < 768 ? -20 : 0) : 0
+          x: stepId === 'coach' ? (windowSize.width < 768 ? 0 : 0) : 0
         }}
-        className={`fixed ${stepId === 'coach' ? 'bottom-20 left-8' : 'bottom-4 right-4'} max-w-sm rounded-lg bg-white p-5 shadow-xl dark:bg-gray-800 border-2 border-blue-500 dark:border-blue-600 z-[1005]`}
+        className={`fixed ${stepId === 'coach' ? 'bottom-20 left-4 md:left-8' : 'bottom-4 right-4'} rounded-lg bg-white p-3 md:p-5 shadow-xl dark:bg-gray-800 border-2 border-blue-500 dark:border-blue-600 z-[1005]`}
         style={{ 
           zIndex: 1005,
           maxWidth: windowSize.width < 640 ? '85vw' : '24rem',
-          left: stepId === 'coach' ? (windowSize.width < 640 ? '1rem' : '8rem') : 'auto'
+          left: stepId === 'coach' ? (windowSize.width < 640 ? '1rem' : windowSize.width < 768 ? '2rem' : '8rem') : 'auto',
+          bottom: windowSize.width < 640 ? '5rem' : (stepId === 'coach' ? '20rem' : '4rem')
         }}
       >
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-2 md:mb-4">
           <div className="flex items-center">
-            <div className="mr-3 h-8 w-8 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-              <HelpCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className="mr-2 md:mr-3 h-6 w-6 md:h-8 md:w-8 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+              <HelpCircle className="h-4 w-4 md:h-5 md:w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white">{stepData.title}</h4>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <h4 className="font-semibold text-gray-900 dark:text-white text-sm md:text-base">{stepData.title}</h4>
+              <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400">
               Step {currentInstructionIndex + 1} of {stepData.instructions.length}
               </p>
             </div>
@@ -396,26 +397,26 @@ const ExplorationGuide = ({ stepId, onReturn, onClose }: ExplorationGuideProps) 
           </button>
         </div>
         
-        <div className="mb-5 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <p className="text-sm font-medium text-blue-800 dark:text-blue-300 whitespace-pre-wrap break-words">
+        <div className="mb-3 md:mb-5 p-3 md:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <p className="text-xs md:text-sm font-medium text-blue-800 dark:text-blue-300 whitespace-pre-wrap break-words">
             {typeof currentInstruction === 'object' ? currentInstruction.text : currentInstruction}
           </p>
         </div>
         
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-3 md:mb-5">
           <button 
             onClick={handlePrevious} 
             disabled={currentInstructionIndex === 0}
-            className="btn btn-secondary btn-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn-secondary btn-xs md:btn-sm disabled:opacity-50 disabled:cursor-not-allowed px-2 py-1 md:px-3 md:py-2"
           >
-            <ChevronLeft size={14} className="mr-1" />
+            <ChevronLeft size={12} className="mr-0.5 md:mr-1" />
             Prev
           </button>
-          <div className="flex space-x-2">
+          <div className="hidden md:flex space-x-1 md:space-x-2">
             {stepData.instructions.map((_, index) => (
               <div
                 key={index}
-                className={`h-2 w-${index === currentInstructionIndex ? '6' : '2'} rounded-full transition-all ${
+                className={`h-1.5 md:h-2 w-${index === currentInstructionIndex ? '4 md:w-6' : '1.5 md:w-2'} rounded-full transition-all ${
                   index === currentInstructionIndex ? 'bg-blue-500' : 
                   index < currentInstructionIndex ? 'bg-blue-300 dark:bg-blue-700' : 'bg-gray-300 dark:bg-gray-600'
                 }`}
@@ -424,29 +425,36 @@ const ExplorationGuide = ({ stepId, onReturn, onClose }: ExplorationGuideProps) 
           </div>
           <button 
             onClick={isLastInstruction ? onReturn : handleNext}
-            className={`btn ${isLastInstruction ? 'btn-success' : 'btn-primary'} btn-sm`}
+            className={`btn ${isLastInstruction ? 'btn-success' : 'btn-primary'} btn-xs md:btn-sm px-2 py-1 md:px-3 md:py-2`}
           >
             {isLastInstruction ? (
               <>
-                <CheckCircle size={14} className="mr-1" />
+                <CheckCircle size={12} className="mr-0.5 md:mr-1" />
                 Continue
               </>
             ) : (
               <>
                 Next
-                <ChevronRight size={14} className="ml-1" />
+                <ChevronRight size={12} className="ml-0.5 md:ml-1" />
               </>
             )}
           </button>
         </div>
         
-        <div className="flex space-x-2 border-t border-gray-200 dark:border-gray-700 pt-4">
-          <button onClick={() => onClose(false)} className="btn btn-outline btn-sm flex-1 text-xs sm:text-sm">
-            <X size={14} className="mr-1" />
+        {/* Mobile step indicator */}
+        <div className="flex justify-center mb-3 md:hidden">
+          <span className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+            {currentInstructionIndex + 1} / {stepData.instructions.length}
+          </span>
+        </div>
+        
+        <div className="flex space-x-2 border-t border-gray-200 dark:border-gray-700 pt-3 md:pt-4">
+          <button onClick={() => onClose(false)} className="btn btn-outline btn-xs md:btn-sm flex-1 text-[10px] md:text-xs">
+            <X size={12} className="mr-0.5 md:mr-1" />
             Skip Guide
           </button>
-          <button onClick={onReturn} className="btn btn-secondary btn-sm flex-1 text-xs sm:text-sm">
-            <ArrowRight size={14} className="mr-1" />
+          <button onClick={onReturn} className="btn btn-secondary btn-xs md:btn-sm flex-1 text-[10px] md:text-xs">
+            <ArrowRight size={12} className="mr-0.5 md:mr-1" />
             Return to Guide
           </button>
         </div>

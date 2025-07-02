@@ -52,7 +52,7 @@ serve(async (req) => {
 
     // Prepare email content
     const emailContent = {
-      from: 'Trackbit <dubstep.nft@gmail.com>', // Use your verified domain in production
+      from: 'Trackbit <onboarding@resend.dev>', // Use your verified domain in production
       to: ['noreply@trackbitapp.com'], // Replace with your recipient email
       subject: 'New Enquiry from Trackbit Landing Page',
       html: `

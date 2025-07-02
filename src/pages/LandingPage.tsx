@@ -29,13 +29,46 @@ const LandingPage = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleEnquiry = (e: React.FormEvent) => {
+  const handleEnquiry = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send the enquiry to a backend
-    toast.success("Thank you for your message! We'll get back to you soon.");
-    setEmail("");
-    setMessage("");
+    
+    if (!email.trim() || !message.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-enquiry`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          message: message.trim(),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success(result.message || "Thank you for your message! We'll get back to you soon.");
+        setEmail("");
+        setMessage("");
+      } else {
+        toast.error(result.error || "Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error('Error sending enquiry:', error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Rotate through features for the AI Coach section
@@ -654,9 +687,19 @@ const LandingPage = () => {
                 <button
                   type="submit"
                   className="btn btn-primary w-full"
+                  disabled={isSubmitting}
                 >
-                  <Send className="mr-2 h-5 w-5" />
-                  Send Message
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                      Sending...
+                    </div>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-5 w-5" />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </form>
             </div>
